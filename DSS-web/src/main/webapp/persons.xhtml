@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+
+
+		<ui:composition template="faces/templates/BasicTemplate.xhtml">
+			<ui:define name="content">
+			<div style="background-color: #F1F1F1;">
+			
+			
+			<h:form id="form1">
+				<p:growl id="msgs" showDetail="false" />
+
+				<p:panel id="persons_panal" header="Список потенційних членів комісій" style="margin:20px;width:1500px;margin-left:12%">
+
+					<p:contextMenu for="persons" widgetVar="cMenu">  
+				       <p:menuitem value="Редагувати комарку" icon="ui-icon-search" onclick="PF('cellPersons').showCellEditor();return false;"/>
+				       <p:menuitem value="Приховати меню" icon="ui-icon-close" onclick="PF('cMenu').hide()"/> 
+				   </p:contextMenu> 
+
+					<p:dataTable id="persons" var="person" value="#{personEditBean.persons}"						
+						editable="true" editMode="cell" widgetVar="cellPersons"
+
+						rows="10"
+                        paginator="true"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="5,10,15"
+
+					 	resizableColumns="true" liveResize="true">
+						
+						
+						<f:facet name="header">
+				       		Список членів комісії
+				  		</f:facet>
+
+						<p:ajax event="cellEdit" listener="#{personEditBean.onPersonCellEdit}" update=":form1:msgs" />
+
+
+						<p:column headerText="Прізвище">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{person.lName}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{person.lName}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Імя">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{person.fName}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{person.fName}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>				
+						
+						<p:column headerText="По батькові">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{person.mName}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{person.mName}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<p:column headerText="Регалії">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{person.regalia}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{person.regalia}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						
+						<p:column headerText="Видалити">
+		                    <p:commandButton icon="ui-icon-trash"
+		                        title="Видалити запис"
+		                        actionListener="#{personEditBean.deletePerson(person)}"
+		                        ajax="false" />
+	                	</p:column>
+
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:form>
+	
+
+			<h:form id="form2">
+				<p:panel id="add_person_panal" header="Додати члена комісії" style="margin-bottom:10px;margin-top:10px;width:800px;margin-left:12%">
+			        <h:panelGrid id="add_person_panal_grid" cellpadding="5" columns="2" style="margin:10px">
+			        
+				        <p:outputLabel value="Прізвище: " for="addPersonlName" />
+						<p:inputText id="addPersonlName" value="#{personEditBean.newPerson.lName}" />
+				 		
+				 		<p:outputLabel value="Імя: " for="addPersonfName" />
+						<p:inputText id="addPersonfName" value="#{personEditBean.newPerson.fName}" />
+						
+						<p:outputLabel value="По батькові: " for="addPersonmName" />
+						<p:inputText id="addPersonmName" value="#{personEditBean.newPerson.mName}" />
+						
+						<p:outputLabel value="Регалії: " for="addPersonRegalia" />
+						<p:inputText id="addPersonRegalia" value="#{personEditBean.newPerson.regalia}"/>
+
+				 	</h:panelGrid>
+				 	
+			        <p:separator />
+			        <p:commandButton value="Додати члена комісії" update=":form1:msgs,:form1:persons_panal,:form2:add_person_panal" actionListener="#{personEditBean.addPerson}" icon="ui-icon-check" />
+				        
+			    </p:panel>
+			</h:form>
+			
+			
+			</div>
+		</ui:define>
+		</ui:composition>
+
+
+</html>

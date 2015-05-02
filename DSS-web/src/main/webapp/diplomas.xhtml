@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+
+
+						
+						
+		<ui:composition template="faces/templates/BasicTemplate.xhtml">
+			<ui:define name="content">
+			<div style="background-color: #F1F1F1;">
+	
+	
+			<h:form id="form1">
+			    <p:growl id="msgs" showDetail="false" />
+			 
+				<h:panelGrid id="years_grid" cellpadding="5" columns="2" style="margin-left:18%;margin-right:18%;width:64%">
+				    <p:panel header="Виберіть захист" style="margin-bottom:5px;margin-top:5px;margin-right:1%;height:160px;width:99%">
+				        <h:panelGrid columns="2" cellpadding="5">
+				            <p:outputLabel for="year" value="Рік: " />
+				            <p:selectOneMenu id="year" value="#{diplomasEditBean.year}" style="width:150px">
+				                <p:ajax listener="#{diplomasEditBean.onYearChange}" update=":form1,:form2:groups_panal,:form25,:form4:students_panal,:form3:add_groups_panal,:form5:add_student_panal" />
+				                <f:selectItem itemLabel="Веберіть рік" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{diplomasEditBean.years}" />
+				            </p:selectOneMenu>
+
+							<p:outputLabel for="quarter" value="Чверть: " />
+				            <p:selectOneMenu id="quarter" value="#{diplomasEditBean.quarter}" style="width:150px">
+				           		<p:ajax listener="#{diplomasEditBean.onSeasonChange}" update=":form1,:form2:groups_panal,:form25,:form4:students_panal,:form3:add_groups_panal,:form5:add_student_panal"/>
+				                <f:selectItem itemLabel="Виберіть чверть" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{diplomasEditBean.quarters}" />
+				            </p:selectOneMenu>
+				        </h:panelGrid>
+				 
+				    </p:panel>
+	
+	
+	
+	 
+				    <p:panel header="Додати рік" style="margin-bottom:5px;margin-top:5px;height:160px;width:100%">
+				        
+				        <p:outputLabel value="Рік: " for="acAdd" />
+						<p:inputText id="acAdd" value="#{diplomasEditBean.newGraduationYear}" validatorMessage="Невірний формат року!" >
+							<f:validateRegex pattern="[12][109][0-9][0-9]"/>
+						</p:inputText>
+				 
+				        <p:separator />
+				 
+				        <p:commandButton value="Додати рік" update=":form1" actionListener="#{diplomasEditBean.addGraduation}" icon="ui-icon-check" />
+				    </p:panel>
+			    </h:panelGrid>
+
+			</h:form>
+				
+			<h:panelGrid id="groups_grid" cellpadding="5" columns="2" style="margin-left:18%;margin-right:18%;width:64%">
+				<h:form id="form2">
+	
+				    <p:panel id="groups_panal" header="Виберіть групу" style="margin-bottom:5px;margin-top:5px;margin-right:1%;height:160px;width:99%" visible="#{diplomasEditBean.displayGroups}">
+				        
+				        <p:outputLabel for="group" value="Група: " />
+			            <p:selectOneMenu id="group" value="#{diplomasEditBean.groupName}" style="width:150px">
+			            	<p:ajax listener="#{diplomasEditBean.onGroupChange}" update=":form4:students_panal,:form5:add_student_panal"/>
+			                <f:selectItem itemLabel="Виберіть групу" itemValue="" noSelectionOption="true" />
+			                <f:selectItems value="#{diplomasEditBean.groups}" />
+			            </p:selectOneMenu>
+			            
+			            <p:separator />
+				 
+				        <p:commandButton value="Видалити групу" update=":form1:msgs,:form2,:form25,:form4:students_panal,:form5:add_student_panal" actionListener="#{diplomasEditBean.deleteGroup}" icon="ui-icon-trash" />
+				    </p:panel>
+
+				</h:form>
+
+				<h:form id="form3">
+	
+					<p:panel id="add_groups_panal" header="Додати групу" style="margin-bottom:5px;margin-top:5px;margin-right:1%;height:160px;width:99%" visible="#{diplomasEditBean.displayGroups}">
+				        
+				        <p:outputLabel value="Група: " for="addGroup" />
+						<p:inputText id="addGroup" value="#{diplomasEditBean.newGroupName}" />
+				 
+				        <p:separator />
+				 
+				        <p:commandButton value="Додати групу" update=":form1:msgs,:form2,:form25,:form3" actionListener="#{diplomasEditBean.addGroup}" icon="ui-icon-check" />
+				        
+				    </p:panel>
+				</h:form>
+				
+			</h:panelGrid>
+			
+			<h:form id="form25">
+				<p:accordionPanel multiple="true" activeIndex="null" style="width:70%;margin-left:15%;margin-right:15%;margin-bottom:5px;margin-top:5px"
+					rendered="#{diplomasEditBean.displayGroups}">						
+					<p:tab title="Завантаження даних з файлу">
+						
+						<p:panel id="add_doc_panal" header="Завантажити з файлу" style="margin-bottom:5px;margin-top:5px;width:100%">
+				            <p:fileUpload fileUploadListener="#{diplomasEditBean.loadStudentsDoc}" mode="advanced" fileLimit="1" sizeLimit="1000000" showButtons="false" dragDropSupport="true"
+				            	auto="true"
+				            	allowTypes="/(\.|\/)(doc)$/"
+				            	update=":form1:msgs,:form2,:form25,:form3"/>
+				            <p:separator />
+							<h:panelGrid id="groups_grid" cellpadding="5" columns="1">
+					 			<h:outputText value="Файл завантажено." rendered="#{diplomasEditBean.studentsDocFile ne null}"/>
+					        	<p:commandButton value="Завантажити дані з файлу" update=":form1:msgs,:form2,:form25,:form3,:form4,:form5" actionListener="#{diplomasEditBean.parsStudentsDoc}" icon="ui-icon-check" />
+					        </h:panelGrid>
+					    </p:panel>
+				    
+				    </p:tab>
+				</p:accordionPanel>
+			</h:form>
+				
+			<h:form id="form4">
+				<p:growl id="msgs" showDetail="false" />
+
+				<p:panel id="students_panal" header="Список студентів та даних про дипломи" style="margin:20px;width:1500px;margin-left:12%" visible="#{diplomasEditBean.displayStudents}">
+
+					
+					<p:accordionPanel value="#{diplomasEditBean.groupObj.students.toArray()}" var="student" multiple="true" activeIndex="null" style="margin-top:15px;">						
+						<p:tab title="#{student.lName} #{student.fName} #{student.mName}">
+							
+							<p:panel header="Дані про студента" style="margin-bottom:10px;">
+								<h:panelGrid cellpadding="5" columns="2">
+									<h:outputText value="Прізвище" />
+									<p:inputText value="#{student.lName}" style="width:96%"/>
+									
+									<h:outputText value="Імя " />
+									<p:inputText value="#{student.fName}" style="width:96%"/>
+									
+									<h:outputText value="По батькові " />
+									<p:inputText value="#{student.mName}" style="width:96%"/>
+									
+									<h:outputText value="Номер телефону " />
+									<p:inputText value="#{student.telephoneNumber}" style="width:96%"/>
+									
+									<h:outputText value="Електронна пошта " />
+									<p:inputText value="#{student.email}" style="width:96%"/>
+									
+									<p:outputLabel value="Диплом з відзнакою: " for="addHasHonorsDiplom" />
+									<p:selectBooleanCheckbox  id="addHasHonorsDiplom" value="#{student.hasHonorsDiplom}"/>
+									
+									<p:outputLabel value="Рекомендувати в аспірантуру " for="addIsRecommendedToPostgraduate" />
+									<p:selectBooleanCheckbox  id="addIsRecommendedToPostgraduate" value="#{student.isRecommendedToPostgraduate}"/>
+								</h:panelGrid>
+							</p:panel>
+							
+							<p:panel header="Дані про диплом про дипломи" style="margin-bottom:10px;">
+								<h:panelGrid cellpadding="5" columns="2">
+								
+									<h:outputText value="Тема диплому" />
+									<p:inputText value="#{student.diploma.theme}" style="width:200%"/>
+									
+									
+									<p:outputLabel value="К-сть сторінок розрахунково-пояснювальної записки "/>
+									<p:inputText value="#{student.diploma.numberOfExplanatoryPages}" style="width:96%" validatorMessage="Невірний формат! Введіть число від 1 до 500.">
+										<f:validateDoubleRange minimum="1" maximum="500" />
+									</p:inputText>
+									
+									
+									<p:outputLabel value="К-сть аркушів креслень "/>
+									<p:inputText id="aaa" value="#{student.diploma.numberOfDrawingsPages}" style="width:96%" validatorMessage="Невірний формат! Введіть число від 1 до 500." >
+										<f:validateDoubleRange minimum="1" maximum="500" />
+									</p:inputText>
+									
+												
+									<h:outputText value="Оцінка " />
+									<p:selectOneMenu value="#{student.diploma.rating}">
+										<f:selectItems value="#{enumManagerBean.ratingEnumMap}" />
+									</p:selectOneMenu>
+									
+									<h:outputText value="Оцінка керівника " />
+									<p:selectOneMenu value="#{student.diploma.headRating}">
+										<f:selectItems value="#{enumManagerBean.ratingEnumMap}" />
+									</p:selectOneMenu>
+									
+									<h:outputText value="Оцінка рецензента " />
+									<p:selectOneMenu value="#{student.diploma.reviewerRating}">
+										<f:selectItems value="#{enumManagerBean.ratingEnumMap}" />
+									</p:selectOneMenu>
+										
+									
+									<h:outputText value="Тип диплому" />
+									<p:selectOneMenu value="#{student.diploma.diplomaType}">
+										<f:selectItems value="#{enumManagerBean.diplomaTypeEnumMap}" />
+									</p:selectOneMenu>
+									
+									<h:outputText value="Форма навчання " />
+									<p:selectOneMenu value="#{student.diploma.form}">
+										<f:selectItems value="#{enumManagerBean.formEnumMap}" />
+									</p:selectOneMenu>
+									
+								</h:panelGrid>
+							</p:panel>
+							
+							<p:panel header="Розширені дані про дипломи" style="margin-bottom:10px;">
+								<h:panelGrid cellpadding="5" columns="2">
+								
+									<p:outputLabel value="Допущено до захисту " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.allowed}"/>
+									
+									
+									<p:outputLabel value="Захищено кваліфікаційних робіт " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.isprotected}"/>
+									
+									
+									<p:outputLabel value="Виконано з використанням пакетів прикладних програм " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.softwareUsed}"/>
+									
+									
+									<p:outputLabel value="Дослідного характеру " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.researchType}"/>
+									
+									
+									<p:outputLabel value="3 реальними проектно-конструктор-ськими технічними розробками " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.withRealTechnologicalDevelopments}"/>
+									
+									
+									<p:outputLabel value="Рекомендовано до впроваджування " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.recommendedToImplementation}"/>
+									
+									
+									<p:outputLabel value="На замовлення підприємств " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.byEnterpriseOrder}"/>
+									
+									
+									<p:outputLabel value="Захищено на виробництві " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.protectedOnEnterprise}"/>
+									
+									
+									<p:outputLabel value="Комплексні проекти (роботи). Міжвузівські " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.complexWorkInteruniversity}"/>
+									
+									
+									<p:outputLabel value="Комплексні проекти (роботи). Міжкафедральні " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.complexWorkIntercathedral}"/>
+									
+									
+									<p:outputLabel value="Комплексні проекти (роботи). Кафедральні студенти, що взяли участь у комплексному проектуванні " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.complexWorkCathedral}"/>
+									
+									
+									<p:outputLabel value="Рекомендовано до друку " />
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.recommendedToPrint}"/>
+									
+								</h:panelGrid>
+							</p:panel>
+							
+							
+							<p:commandButton title="Видалити"
+								actionListener="#{diplomasEditBean.deleteStudent(student)}"
+								icon="ui-icon-trash" update=":form1:msgs,:form4:students_panal"
+								style="
+				        		margin-top: 20px;
+				        		margin-left: 95%;
+				        		margin-right: auto;"/>
+				            
+						</p:tab>
+					</p:accordionPanel>
+
+					<h:panelGrid cellpadding="5" columns="2" style="margin-top:40px;">
+						<p:commandButton value="Зберегти всі" actionListener="#{diplomasEditBean.updateAllStudentOnEdit()}" icon="ui-icon-check" update=":form1:msgs,:form4:students_panal"/>
+	                    <p:commandButton value="Відмінити всі" actionListener="#{diplomasEditBean.clearAllStudentChangesOnEdit()}" update=":form1:msgs,:form4:students_panal"/>
+		            </h:panelGrid>
+
+				</p:panel>
+
+			</h:form>
+	
+
+			<h:form id="form5">
+				<p:panel id="add_student_panal" header="Додати студента" style="margin-bottom:10px;margin-top:10px;width:800px;margin-left:12%"
+						 visible="#{diplomasEditBean.displayStudents}">
+			        <h:panelGrid id="add_student_panal_grid" cellpadding="5" columns="2" style="margin:10px">
+			        
+				        <p:outputLabel value="Прізвище: " for="addStudlName" />
+						<p:inputText id="addStudlName" value="#{diplomasEditBean.newStudent.lName}" />
+				 		
+				 		<p:outputLabel value="Імя: " for="addStudfName" />
+						<p:inputText id="addStudfName" value="#{diplomasEditBean.newStudent.fName}" />
+						
+						<p:outputLabel value="По батькові: " for="addStudmName" />
+						<p:inputText id="addStudmName" value="#{diplomasEditBean.newStudent.mName}" />
+						
+						<p:outputLabel value="Номер телефону: " for="addTelephoneNumber" />
+						<p:inputText id="addTelephoneNumber" value="#{diplomasEditBean.newStudent.telephoneNumber}" validatorMessage="Невірний формат телефону!" >
+							<f:validateRegex pattern="[0-9+]?[0-9]*"/>
+						</p:inputText>
+	
+						<p:outputLabel value="Електронна пошта: " for="addEmail" />
+						<p:inputText id="addEmail" value="#{diplomasEditBean.newStudent.email}" />
+				
+						<p:outputLabel value="Диплом з відзнакою: " for="addHasHonorsDiplom" />
+						<p:selectBooleanCheckbox  id="addHasHonorsDiplom" value="#{diplomasEditBean.newStudent.hasHonorsDiplom}"/>
+						
+						<p:outputLabel value="Рекомендувати в аспірантуру: " for="addIsRecommendedToPostgraduate" />
+						<p:selectBooleanCheckbox  id="addIsRecommendedToPostgraduate" value="#{diplomasEditBean.newStudent.isRecommendedToPostgraduate}"/>
+
+				 	</h:panelGrid>
+				 	
+			        <p:separator />
+			        <p:commandButton value="Додати студента"
+			        	update=":form1:msgs,:form4:students_panal,:form5:add_student_panal"
+			        	actionListener="#{diplomasEditBean.addStudent}" icon="ui-icon-check" />
+				        
+			    </p:panel>
+			</h:form>
+	
+	
+		</div>
+		</ui:define>
+		</ui:composition>
+
+
+</html>

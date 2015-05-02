@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<h:head>
+    	<title>DEK</title>
+	</h:head>
+
+	<h:body>
+	<h:form> 
+    <p:growl id="messages"/>
+		<p:menubar>
+		
+			<p:menuitem value="Головна" url="index.xhtml"/>
+		
+			<p:menuitem value="Студенти" url="diplomas.xhtml"/>
+		
+	        <p:submenu label="Рецензування">
+	            <p:menuitem value="Рецензенти" url="reviewers.xhtml" />
+	            <p:menuitem value="Рецензії" url="reviews.xhtml" />
+	        </p:submenu>
+	 
+	        <p:submenu label="ДЕК">
+	            <p:menuitem value="Члени комісії" url="persons.xhtml"/>
+	            <p:menuitem value="Комісія" url="commissions.xhtml"/>
+	            <p:menuitem value="Захист" url="graduation.xhtml"/>
+	        </p:submenu>
+	 
+	        <p:menuitem style="margin-left:1400px" value="Вихід" url="logout"/>
+
+	    </p:menubar>
+	
+	</h:form>
+	</h:body>
+</html>

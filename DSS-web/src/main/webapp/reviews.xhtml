@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+
+
+
+
+		<ui:composition template="faces/templates/BasicTemplate.xhtml">
+			<ui:define name="content">
+			<div style="background-color: #F1F1F1;">
+	
+	
+	
+			<script>
+				PrimeFaces.locales ['uk'] = {
+				    closeText: 'Обрати', prevText: 'Попередній', nextText: 'Наступний',
+				    monthNames: ['Сiчень', 'Лютий', 'Березень', 'Квiтень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень' ],
+				    monthNamesShort: ['Сiч', 'Лют', 'Бер', 'Квi', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру' ],
+				    dayNames: ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'],
+				    dayNamesShort: ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+				    dayNamesMin: ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'], weekHeader: 'Тиждень',
+				    firstDay: 1, isRTL: false, showMonthAfterYear: false, yearSuffix:'', timeOnlyTitle: 'Тільки Час', timeText: 'Час', hourText: 'Час',
+				    minuteText: 'Хвилина', secondText: 'Секунда', currentText: 'Поточна дата', ampm: false, month: 'Місяць', week: 'тиждень', day: 'день', allDayText: 'Весь День'
+				};
+			</script>
+	
+	
+			<h:form id="form1">
+			    <p:growl id="msgs" showDetail="false" />
+			 
+				<h:panelGrid id="years_grid" cellpadding="5" columns="2" style="margin-left:18%;">
+				    <p:panel header="Виберіть захист" style="margin-bottom:5px;margin-top:5px;height:160px;width:600px">
+				        <h:panelGrid columns="2" cellpadding="5">
+				            <p:outputLabel for="year" value="Рік: " />
+				            <p:selectOneMenu id="year" value="#{reviewsEditBean.year}" style="width:150px">
+				                <p:ajax listener="#{reviewsEditBean.onYearChange}" update="quarter,:form1:groups_panal,:form2:reviews_panal,:form3:add_review_panal" />
+				                <f:selectItem itemLabel="Веберіть рік" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{reviewsEditBean.years}" />
+				            </p:selectOneMenu>
+
+							<p:outputLabel for="quarter" value="Чверть: " />
+				            <p:selectOneMenu id="quarter" value="#{reviewsEditBean.quarter}" style="width:150px">
+				           		<p:ajax listener="#{reviewsEditBean.onSeasonChange}" update=":form1:groups_panal,:form2:reviews_panal,:form3:add_review_panal"/>
+				                <f:selectItem itemLabel="Виберіть чверть" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{reviewsEditBean.quarters}" />
+				            </p:selectOneMenu>
+				        </h:panelGrid>
+				 
+				    </p:panel>
+	
+
+					<p:panel id="groups_panal" header="Виберіть групу" style="margin-bottom:5px;margin-top:5px;height:160px;width:600px" visible="#{reviewsEditBean.displayGroups}">
+				        
+				        <h:panelGrid columns="2" cellpadding="5">
+					        <p:outputLabel for="group" value="Група: " />
+				            <p:selectOneMenu id="group" value="#{reviewsEditBean.groupName}" style="width:150px">
+				            	<p:ajax listener="#{reviewsEditBean.onGroupChange}" update=":form2:reviews_panal,:form3:add_review_panal"/>
+				                <f:selectItem itemLabel="Виберіть групу" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{reviewsEditBean.groups}" />
+				            </p:selectOneMenu>
+				        </h:panelGrid>
+			     
+				    </p:panel>
+
+			    </h:panelGrid>
+
+			</h:form>
+				
+				
+			<h:form id="form2">
+
+				<p:panel id="reviews_panal" header="Рецензії" style="margin:20px;width:1500px;margin-left:12%" visible="#{reviewsEditBean.displayReviews}">
+
+						<h:panelGrid id="years_grid" cellpadding="5" columns="2">
+							<p:outputLabel value="Рецензент: " />
+				            <p:selectOneMenu value="#{reviewsEditBean.reviewerId}">
+				            	<p:ajax listener="#{reviewsEditBean.onReviewerChange}" update=":form2:reviews_panal,:form3:add_review_panal"/>
+				                <f:selectItems value="#{reviewsEditBean.reviewersWithId}" />
+				            </p:selectOneMenu>
+						</h:panelGrid>
+
+             
+			         	<h:panelGroup rendered="#{reviewsEditBean.displayReviewsList}">
+			         
+			            	
+							<p:dataTable var="review" value="#{reviewsEditBean.reviewsList}" sortMode="multiple"
+								
+								resizableColumns="true">
+								
+								<f:facet name="header">
+						       		Список рецензій
+						  		</f:facet>
+		
+								
+								<p:column headerText="Студент" sortBy="#{review.diploma.student.lName.concat(' ').concat(review.diploma.student.fName).concat(' ').concat(review.diploma.student.mName)}">
+									<h:outputText
+										value="#{review.diploma.student.lName.concat(' ').concat(review.diploma.student.fName).concat(' ').concat(review.diploma.student.mName)}"
+										style="width:96%"/>
+								</p:column>
+								
+								<p:column headerText="Дата рецензування" sortBy="#{review.date}">
+									<p:calendar value="#{review.date}" locale="uk" navigator="true" pattern="dd.MM.yyyy" style="width:96%">
+										<p:ajax event="change" update=":form1:msgs,:form2:reviews_panal" listener="#{reviewsEditBean.onReviewDateUpdate(review)}" />
+										<p:ajax event="dateSelect" update=":form1:msgs,:form2:reviews_panal" listener="#{reviewsEditBean.onReviewDateUpdate(review)}" />
+									</p:calendar>
+								</p:column>
+								
+								<p:column headerText="Час початку перевірки" sortBy="#{review.timeStart}">
+									<p:calendar value="#{review.timeStart}" pattern="HH:mm" timeOnly="true">
+										<p:ajax event="change" update=":form1:msgs,:form2:reviews_panal" listener="#{reviewsEditBean.onReviewStartTimeUpdate(review)}" />
+										<p:ajax event="dateSelect" update=":form1:msgs,:form2:reviews_panal" listener="#{reviewsEditBean.onReviewStartTimeUpdate(review)}" />
+									</p:calendar>
+								</p:column>
+								
+								<p:column headerText="Час кінця перевірки" sortBy="#{review.timeEnd}">
+									<p:calendar value="#{review.timeEnd}" pattern="HH:mm" timeOnly="true">
+										<p:ajax event="change" update=":form1:msgs,:form2:reviews_panal" listener="#{reviewsEditBean.onReviewEndTimeUpdate(review)}" />
+										<p:ajax event="dateSelect" update=":form1:msgs,:form2:reviews_panal" listener="#{reviewsEditBean.onReviewEndTimeUpdate(review)}" />
+									</p:calendar>
+								</p:column>
+								
+								
+								<p:column  headerText="Видалити">
+				                    <p:commandButton icon="ui-icon-trash"
+				                        title="Видалити запис"
+				                        actionListener="#{reviewsEditBean.deleteReview(review)}"
+				                        update=":form1:msgs,:form2:reviews_panal,:form3:add_review_panal"
+				                        ajax="false" />
+			                	</p:column>
+		
+		
+							</p:dataTable>
+							
+						</h:panelGroup>
+			            
+			            
+				</p:panel>
+
+			</h:form>
+	
+
+			<h:form id="form3">
+				<p:panel id="add_review_panal" header="Додати рецензію" style="margin-bottom:10px;margin-top:10px;width:800px;margin-left:12%"
+						 visible="#{reviewsEditBean.displayAddReview}">
+			        
+			        <h:panelGrid id="years_grid" cellpadding="5" columns="2">
+				        
+				        <p:outputLabel value="Стедент: " />
+				        <p:selectOneMenu value="#{reviewsEditBean.freeStudentForNewReviewId}">
+				            <f:selectItems value="#{reviewsEditBean.freeStudentsForNewReviewsWithId}" />
+				        </p:selectOneMenu>
+				        
+				        <p:commandButton value="Додати рецензію" actionListener="#{reviewsEditBean.addNewReview()}" icon="ui-icon-check" update=":form1:msgs,:form2:reviews_panal,:form3:add_review_panal"/>
+			        </h:panelGrid>
+			        
+			    </p:panel>
+			</h:form>
+	
+	
+		</div>
+		</ui:define>
+		</ui:composition>
+
+
+</html>

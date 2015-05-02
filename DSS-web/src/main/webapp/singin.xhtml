@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<h:body>
+
+			<div style="background-color: #F1F1F1;width:100%;height:100%;position: absolute;">
+			
+				<div style="
+					border: 5px solid #D7D7D7;
+					width:300px;
+					height:200px;
+					margin-top: 300px;
+				  	margin-left: 800px;
+				  	background: -moz-linear-gradient(center top , rgba(150, 150, 150, 0.8), rgba(200, 200, 200, 0)) repeat scroll 0 0 #c4c4c4;
+				  ">
+				  
+					  	<div style="margin-left: 20px;">
+					  		
+					  		<h4 style="text-align: center;margin-left: -15px;">Система автоматизації ведення документації</h4>
+					  		
+							<h:form>
+								<p:growl id="msgs" showDetail="false" />
+							
+								<h:panelGrid id="add_student_panal_grid" cellpadding="5" columns="2" style="margin:10px">
+			        
+							        <p:outputLabel value="Логін: " for="login" />
+									<p:inputText id="login" value="#{authorizationBean.login}" />
+							 		
+							 		<p:outputLabel value="Пароль: " for="pass" />
+									<p:password id="pass" value="#{authorizationBean.pass}" />
+								
+								</h:panelGrid>
+			
+								
+								<div style="margin-left: 100px;">
+			        				<p:commandButton value="Ввійти" update="msgs" actionListener="#{authorizationBean.tryToLogin}" icon="ui-icon-check" />
+								</div>
+							</h:form>
+					  		
+					  	</div>
+				  	
+				  </div>
+	
+			</div>
+
+	</h:body>
+
+
+</html>

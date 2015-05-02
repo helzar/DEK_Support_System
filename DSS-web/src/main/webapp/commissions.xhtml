@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+
+
+		<ui:composition template="faces/templates/BasicTemplate.xhtml">
+			<ui:define name="content">
+			<div style="background-color: #F1F1F1;">
+	
+
+			<script>
+				PrimeFaces.locales ['uk'] = {
+				    closeText: 'Обрати', prevText: 'Попередній', nextText: 'Наступний',
+				    monthNames: ['Сiчень', 'Лютий', 'Березень', 'Квiтень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень' ],
+				    monthNamesShort: ['Сiч', 'Лют', 'Бер', 'Квi', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру' ],
+				    dayNames: ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'],
+				    dayNamesShort: ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+				    dayNamesMin: ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'], weekHeader: 'Тиждень',
+				    firstDay: 1, isRTL: false, showMonthAfterYear: false, yearSuffix:'', timeOnlyTitle: 'Тільки Час', timeText: 'Час', hourText: 'Час',
+				    minuteText: 'Хвилина', secondText: 'Секунда', currentText: 'Поточна дата', ampm: false, month: 'Місяць', week: 'тиждень', day: 'день', allDayText: 'Весь День'
+				};
+			</script>
+	
+	
+			<h:form id="form1">
+			    <p:growl id="msgs" showDetail="false" />
+	
+					<p:panel header="Виберіть захист" style="margin-bottom:5px;margin-left:30%;margin-top:5px;height:160px;width:40%">
+				        <h:panelGrid columns="2" cellpadding="5">
+				            <p:outputLabel for="year" value="Рік: " />
+				            <p:selectOneMenu id="year" value="#{commissionEditBean.year}" style="width:150px">
+				                <p:ajax listener="#{commissionEditBean.onYearChange}" update="quarter,:form2:commission_panal" />
+				                <f:selectItem itemLabel="Веберіть рік" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{commissionEditBean.years}" />
+				            </p:selectOneMenu>
+				
+							<p:outputLabel for="quarter" value="Чверть: " />
+				            <p:selectOneMenu id="quarter" value="#{commissionEditBean.quarter}" style="width:150px">
+				           		<p:ajax listener="#{commissionEditBean.onSeasonChange}" update=":form2:commission_panal,:form3"/>
+				                <f:selectItem itemLabel="Виберіть чверть" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{commissionEditBean.quarters}" />
+				            </p:selectOneMenu>
+				        </h:panelGrid>
+				 
+				    </p:panel>
+				    
+			</h:form>
+			
+			
+			<h:form id="form2">
+
+				<p:panel id="commission_panal" header="Комісія" style="margin:20px;width:1500px;margin-left:12%" visible="#{commissionEditBean.displayCommissions}">
+				
+					<h:panelGrid cellpadding="5" columns="3">
+						<p:outputLabel
+							value="Голова комісії: #{commissionEditBean.commission.head.lName} #{commissionEditBean.commission.head.fName} #{commissionEditBean.commission.head.mName}"/>
+						<p:selectOneMenu value="#{commissionEditBean.newHeadId}" style="width:150px">
+			                <f:selectItems value="#{commissionEditBean.freePersonIds}" />
+			            </p:selectOneMenu>
+			            <p:commandButton value="Змінити голову" actionListener="#{commissionEditBean.onCommissionHeadChange()}" icon="ui-icon-check" update=":form1:msgs,:form2:commission_panal"/>
+							
+						<p:outputLabel 
+							value="Секретар: #{commissionEditBean.commission.secretary.lName} #{commissionEditBean.commission.secretary.fName} #{commissionEditBean.commission.secretary.mName}"/>
+						<p:selectOneMenu value="#{commissionEditBean.newSecretaryId}" style="width:150px">
+			                <f:selectItems value="#{commissionEditBean.freePersonIds}" />
+			            </p:selectOneMenu>
+			            <p:commandButton value="Змінити секретаря" actionListener="#{commissionEditBean.onCommissionSecretaryChange()}" icon="ui-icon-check" update=":form1:msgs,:form2:commission_panal"/>
+							
+					</h:panelGrid>
+					
+					<br/>
+					<p:separator/>
+					
+					<p:dataTable var="person" value="#{commissionEditBean.commission.persons}"
+						resizableColumns="true">
+						
+						<f:facet name="header">
+				       		Список членів комісії
+				  		</f:facet>
+
+						
+						<p:column headerText="Член комісії">
+							<h:outputText
+								value="#{person.lName} #{person.fName} #{person.mName}"
+								style="width:96%"/>
+						</p:column>
+						
+						<p:column  headerText="Видалити">
+		                    <p:commandButton icon="ui-icon-trash"
+		                        title="Видалити запис"
+		                        actionListener="#{commissionEditBean.deletePerson(person)}"
+		                        update=":form2:commission_panal"
+		                        ajax="false" />
+	                	</p:column>
+						
+					</p:dataTable>
+					
+					<br/>
+					<p:separator/>
+					
+					<h:panelGrid cellpadding="5" columns="3">
+						<p:outputLabel
+							value="Додати члена комісії: "/>
+						<p:selectOneMenu value="#{commissionEditBean.newPersonId}" style="width:150px">
+			                <f:selectItems value="#{commissionEditBean.freePersonIds}" />
+			            </p:selectOneMenu>
+			            <p:commandButton value="Додати" actionListener="#{commissionEditBean.onCommissionPersonChange()}" icon="ui-icon-check" update=":form1:msgs,:form2:commission_panal"/>
+					</h:panelGrid>
+				
+				</p:panel>
+				
+			</h:form>
+			
+			
+			
+			
+			
+			
+			
+			<h:form id="form3">
+
+				<p:panel id="timetable_panal" header="Розклад засідань" style="margin:20px;width:1500px;margin-left:12%" visible="#{commissionEditBean.displayCommissions}">
+
+			         	
+							<p:dataTable var="pDay" value="#{commissionEditBean.protectionDayList}"
+								
+								resizableColumns="true">
+								
+								<f:facet name="header">
+						       		Список рецензій
+						  		</f:facet>
+		
+								
+								<p:column headerText="Дата засідання" sortBy="#{pDay.day}">
+									<p:calendar value="#{pDay.day}" locale="uk" navigator="true" pattern="dd.MM.yyyy" style="width:96%">
+										<p:ajax event="change" update=":form1:msgs,:form3" listener="#{commissionEditBean.onProtectionDayDayUpdate(pDay)}" />
+										<p:ajax event="dateSelect" update=":form1:msgs,:form3" listener="#{commissionEditBean.onProtectionDayDayUpdate(pDay)}" />
+									</p:calendar>
+								</p:column>
+								
+								<p:column headerText="Час початку">
+									<p:calendar value="#{pDay.startTime}" pattern="HH:mm" timeOnly="true">
+										<p:ajax event="change" update=":form1:msgs,:form3" listener="#{commissionEditBean.onProtectionDayStartTimeUpdate(pDay)}" />
+										<p:ajax event="dateSelect" update=":form1:msgs,:form3" listener="#{commissionEditBean.onProtectionDayStartTimeUpdate(pDay)}" />
+									</p:calendar>
+								</p:column>
+								
+								<p:column headerText="Час кінця">
+									<p:calendar value="#{pDay.endTime}" pattern="HH:mm" timeOnly="true">
+										<p:ajax event="change" update=":form1:msgs,:form3" listener="#{commissionEditBean.onProtectionDayEndTimeUpdate(pDay)}" />
+										<p:ajax event="dateSelect" update=":form1:msgs,:form3" listener="#{commissionEditBean.onProtectionDayEndTimeUpdate(pDay)}" />
+									</p:calendar>
+								</p:column>
+								
+								
+								<p:column headerText="Аудиторія">
+									<h:outputText value="#{pDay.auditorium}" style="width:96%"/>
+								</p:column>
+								
+								
+								
+								<p:column  headerText="Видалити">
+				                    <p:commandButton icon="ui-icon-trash"
+				                        title="Видалити запис"
+				                        actionListener="#{commissionEditBean.deleteProtectionDay(pDay)}"
+				                        update=":form1:msgs,:form3"
+				                        ajax="false" />
+			                	</p:column>
+		
+							</p:dataTable>
+		
+							<p:separator/>
+							<p:commandButton value="Додати новий день засідання" actionListener="#{commissionEditBean.addNewProtectionDay()}" icon="ui-icon-check" update=":form1:msgs,:form3"/>				
+			            
+				</p:panel>
+
+			</h:form>
+
+
+			
+		</div>
+		</ui:define>
+	</ui:composition>
+</html>
+				    
+				    
+				    

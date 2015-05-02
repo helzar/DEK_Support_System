@@ -4,3 +4,4 @@ target
 .project
 logs
 output
+/DSS-web/.tern-project

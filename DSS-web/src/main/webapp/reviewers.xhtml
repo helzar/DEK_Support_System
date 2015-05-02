@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+
+
+		<ui:composition template="faces/templates/BasicTemplate.xhtml">
+			<ui:define name="content">
+			<div style="background-color: #F1F1F1;">
+			
+			
+			<h:form id="form1">
+				<p:growl id="msgs" showDetail="false" />
+
+				<p:panel id="reviewers_panal" header="Список рецензентів" style="margin:20px;width:1500px;margin-left:12%">
+
+					<p:contextMenu for="reviewers" widgetVar="cMenu">  
+				       <p:menuitem value="Редагувати комарку" icon="ui-icon-search" onclick="PF('cellReviewers').showCellEditor();return false;"/>
+				       <p:menuitem value="Приховати меню" icon="ui-icon-close" onclick="PF('cMenu').hide()"/> 
+				   </p:contextMenu> 
+
+					<p:dataTable id="reviewers" var="reviewer" value="#{reviewerEditBean.reviewers}"						
+						editable="true" editMode="cell" widgetVar="cellReviewers"
+
+						rows="10"
+                        paginator="true"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="5,10,15"
+
+					 	resizableColumns="true" liveResize="true">
+						
+						
+						<f:facet name="header">
+				       		Список рецензентів
+				  		</f:facet>
+
+						<p:ajax event="cellEdit" listener="#{reviewerEditBean.onReviewerCellEdit}" update=":form1:msgs" />
+
+
+						<p:column headerText="Прізвище">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.lName}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.lName}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Імя">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.fName}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.fName}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>				
+						
+						<p:column headerText="По батькові">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.mName}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.mName}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+
+
+
+
+
+
+
+
+						<p:column headerText="Кількість дітей">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.numberOfChildrens}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.numberOfChildrens}" style="width:96%" label="Year" validatorMessage="Невірний формат!">
+										<f:validateDoubleRange minimum="0" maximum="20" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Вчене звання">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.academicTitle}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.academicTitle}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<p:column headerText="Науковий ступінь">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.degree}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.degree}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<p:column headerText="Місце постійної роботи">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.placeOfPermanentJob}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.placeOfPermanentJob}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+	
+						
+						<p:column headerText="Домашня адреса">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.homeAddress}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.homeAddress}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<p:column headerText="Паспорт серія">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.passportSeries}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.passportSeries}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<p:column headerText="Номер паспорта">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.passportNumber}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.passportNumber}" style="width:96%" label="Year">
+										<f:validateRegex pattern="[0-9]*"/>
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<p:column headerText="Ким паспорт виданий">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{reviewer.passportIssued}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{reviewer.passportIssued}" style="width:96%" label="Year" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						
+						<p:column headerText="Видалити">
+		                    <p:commandButton icon="ui-icon-trash"
+		                        title="Видалити запис"
+		                        actionListener="#{reviewerEditBean.deleteReviewer(reviewer)}"
+		                        ajax="false" />
+	                	</p:column>
+
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:form>
+	
+	
+
+			<h:form id="form2">
+				<p:panel id="add_reviewer_panal" header="Додати рецензента" style="margin-bottom:10px;margin-top:10px;width:800px;margin-left:12%">
+			        <h:panelGrid id="add_reviewer_panal_grid" cellpadding="5" columns="2" style="margin:10px">
+			        
+				        <p:outputLabel value="Прізвище: " for="addReviewerlName" />
+						<p:inputText id="addReviewerlName" value="#{reviewerEditBean.newReviewer.lName}" />
+				 		
+				 		<p:outputLabel value="Імя: " for="addReviewerfName" />
+						<p:inputText id="addReviewerfName" value="#{reviewerEditBean.newReviewer.fName}" />
+						
+						<p:outputLabel value="По батькові: " for="addReviewermName" />
+						<p:inputText id="addReviewermName" value="#{reviewerEditBean.newReviewer.mName}" />
+						
+						
+						
+						
+						<p:outputLabel value="Кількість дітей"/>
+						<p:inputText value="#{reviewerEditBean.newReviewer.numberOfChildrens}" style="width:96%" validatorMessage="Невірне поле: кількість дітей!">
+							<f:validateDoubleRange minimum="0" maximum="20" />
+						</p:inputText>
+
+						<p:outputLabel value="Вчене звання"/>
+						<p:inputText value="#{reviewerEditBean.newReviewer.academicTitle}" style="width:96%" label="Year" />
+
+						<p:outputLabel value="Науковий ступінь"/>
+						<p:inputText value="#{reviewerEditBean.newReviewer.degree}" style="width:96%" label="Year" />
+
+						<p:outputLabel value="Місце постійної роботи"/>
+						<p:inputText value="#{reviewerEditBean.newReviewer.placeOfPermanentJob}" style="width:96%" label="Year" />
+
+						<p:outputLabel value="Домашня адреса"/>
+						<p:inputText value="#{reviewerEditBean.newReviewer.homeAddress}" style="width:96%" label="Year" />
+
+						<p:outputLabel value="Паспорт серія"/>
+						<p:inputText value="#{reviewerEditBean.newReviewer.passportSeries}" style="width:96%" label="Year" />
+
+						<p:outputLabel value="Номер паспорта"/>
+						<p:inputText value="#{reviewerEditBean.newReviewer.passportNumber}" style="width:96%" label="Year">
+							<f:validateRegex pattern="[0-9]*"/>
+						</p:inputText>
+
+						<p:outputLabel value="Ким паспорт виданий"/>
+						<p:inputText value="#{reviewerEditBean.newReviewer.passportIssued}" style="width:96%" label="Year" />
+
+						
+						
+				 	</h:panelGrid>
+				 	
+			        <p:separator />
+			        <p:commandButton value="Додати рецензента" update=":form1:msgs,:form1:reviewers_panal,:form2:add_reviewer_panal" actionListener="#{reviewerEditBean.addReviewer}" icon="ui-icon-check" />
+				        
+			    </p:panel>
+			</h:form>
+			
+			
+			</div>
+		</ui:define>
+		</ui:composition>
+
+
+</html>

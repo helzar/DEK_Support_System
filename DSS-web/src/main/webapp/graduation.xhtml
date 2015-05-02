@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+
+
+		<ui:composition template="faces/templates/BasicTemplate.xhtml">
+			<ui:define name="content">
+			<div style="background-color: #F1F1F1;">
+			
+			<h:form id="form1">
+			    <p:growl id="msgs" showDetail="false" />
+	
+					<p:panel header="Виберіть захист" style="margin-bottom:5px;margin-left:30%;margin-top:5px;width:40%">
+				        <h:panelGrid columns="2" cellpadding="5">
+				            <p:outputLabel for="year" value="Рік: " />
+				            <p:selectOneMenu id="year" value="#{graduationEditBean.year}" style="width:150px">
+				                <p:ajax listener="#{graduationEditBean.onYearChange}" update=":form1,:form2" />
+				                <f:selectItem itemLabel="Веберіть рік" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{graduationEditBean.years}" />
+				            </p:selectOneMenu>
+				
+							<p:outputLabel for="quarter" value="Чверть: " />
+				            <p:selectOneMenu id="quarter" value="#{graduationEditBean.quarter}" style="width:150px">
+				           		<p:ajax listener="#{graduationEditBean.onSeasonChange}" update=":form1,:form2"/>
+				                <f:selectItem itemLabel="Виберіть чверть" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{graduationEditBean.quarters}" />
+				            </p:selectOneMenu>
+				            
+				            <p:outputLabel for="allDays" value="День захисту: " rendered="#{graduationEditBean.displayDaysList}"/>
+				            <p:selectOneMenu id="allDays" value="#{graduationEditBean.protectionDayId}" style="width:150px" rendered="#{graduationEditBean.displayDaysList}">
+				           		<p:ajax listener="#{graduationEditBean.onProtectionDayChange}" update=":form2"/>
+				                <f:selectItems value="#{graduationEditBean.protectionDayIds}" />
+				            </p:selectOneMenu>
+				            
+				        </h:panelGrid>
+				        
+				    </p:panel>
+
+			</h:form>
+			
+			
+			<h:form id="form2">
+
+				<p:panel id="day_commision_info_panal" header="Комісія" style="margin:20px;width:1500px;margin-left:12%" visible="#{graduationEditBean.displayAllGraduationDay}">
+				
+					<p:dataTable var="presentInProtectionDay" value="#{graduationEditBean.protectionDay.presentInProtectionDaySet}"
+						resizableColumns="true">
+						
+						<f:facet name="header">
+				       		Список членів комісії
+				  		</f:facet>
+
+						
+						<p:column headerText="Член комісії">
+							<h:outputText
+								value="#{presentInProtectionDay.person.lName} #{presentInProtectionDay.person.fName} #{presentInProtectionDay.person.mName}"
+								style="width:96%"/>
+						</p:column>
+						
+						<p:column headerText="Присутній у день захисту">
+							<p:selectBooleanCheckbox value="#{presentInProtectionDay.isPresent}">
+								<p:ajax update=":form1:msgs,:form2" listener="#{graduationEditBean.onPresentPersonEdit(presentInProtectionDay)}" />
+							</p:selectBooleanCheckbox>
+						</p:column>
+						
+						
+					</p:dataTable>
+
+				</p:panel>
+				
+				<p:panel id="day_stids_info_panal" header="Студенти, що захищаються" style="margin:20px;width:1500px;margin-left:12%" visible="#{graduationEditBean.displayAllGraduationDay}">
+				
+					<p:dataTable var="diploma" value="#{graduationEditBean.protectionDay.diplomas}"
+						resizableColumns="true">
+						
+						<f:facet name="header">
+				       		Список студентів
+				  		</f:facet>
+
+						
+						<p:column headerText="Студент">
+							<h:outputText
+								value="#{diploma.student.lName} #{diploma.student.fName} #{diploma.student.mName}"
+								style="width:96%"/>
+						</p:column>
+						
+						<p:column headerText="Група">
+							<h:outputText
+								value="#{diploma.student.group.name}"
+								style="width:96%"/>
+						</p:column>
+						
+						<p:column  headerText="Видалити">
+		                    <p:commandButton icon="ui-icon-trash"
+		                        title="Видалити запис"
+		                        actionListener="#{graduationEditBean.deleteDiploma(diploma)}"
+		                        update=":form2"
+		                        ajax="false" />
+	                	</p:column>
+						
+					</p:dataTable>
+					
+					<h:panelGrid cellpadding="5" columns="3" rendered="#{graduationEditBean.numberOfCurrentlySelectedDiplomas lt graduationEditBean.numberOfMaxPossibleDiploms}">
+						<p:outputLabel value="Додати студента: "/>
+						<p:selectOneMenu value="#{graduationEditBean.freeDiplomaId}" style="width:150px">
+			                <f:selectItems value="#{graduationEditBean.freeDiplomaIds}" />
+			            </p:selectOneMenu>
+			            <p:commandButton value="Додати" actionListener="#{graduationEditBean.addDiploma()}" icon="ui-icon-check" update=":form2"/>
+					</h:panelGrid>
+					<p:outputLabel value="Обрано студентів: #{graduationEditBean.numberOfCurrentlySelectedDiplomas} з #{graduationEditBean.numberOfMaxPossibleDiploms}"/>
+
+				</p:panel>
+				
+			</h:form>
+			
+			
+			
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

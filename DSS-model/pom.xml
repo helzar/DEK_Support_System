@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>DSS</artifactId>
+		<groupId>com.nulp</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>DSS-model</artifactId>
+	<name>DSS-model</name>
+<!-- 	<properties> -->
+<!-- 		<mainClass>org.atteo.moonshine.Main</mainClass> -->
+<!-- 	</properties> -->
+
+	<!-- <dependencyManagement> -->
+	<!-- <dependencies> -->
+	<!-- <dependency> -->
+	<!-- <groupId>org.atteo.moonshine</groupId> -->
+	<!-- <artifactId>bom</artifactId> -->
+	<!-- <version>1.1</version> -->
+	<!-- <type>pom</type> -->
+	<!-- <scope>import</scope> -->
+	<!-- </dependency> -->
+	<!-- </dependencies> -->
+	<!-- </dependencyManagement> -->
+
+	<dependencies>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.3.6.Final</version>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.atteo.moonshine</groupId> -->
+		<!-- <artifactId>container</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.atteo.moonshine</groupId> -->
+		<!-- <artifactId>hibernate</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.atteo.moonshine</groupId> -->
+		<!-- <artifactId>h2</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.atteo.moonshine</groupId> -->
+		<!-- <artifactId>atomikos</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.atteo.moonshine</groupId> -->
+		<!-- <artifactId>container-test-utils</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.assertj</groupId> -->
+		<!-- <artifactId>assertj-core</artifactId> -->
+		<!-- <version>1.4.0</version> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>4.3.6.Final</version>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.eclipse.persistence</groupId> -->
+		<!-- <artifactId>javax.persistence</artifactId> -->
+		<!-- <version>2.1.0</version> -->
+		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.3.6.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
+			<version>1.0.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.common</groupId>
+			<artifactId>hibernate-commons-annotations</artifactId>
+			<version>4.0.5.Final</version>
+		</dependency>
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.jboss.spec</groupId> -->
+<!-- 			<artifactId>jboss-javaee-6.0</artifactId> -->
+<!-- 			<version>2.0.0.Final</version> -->
+<!-- 			<type>pom</type> -->
+<!-- 		</dependency> -->
+	</dependencies>
+
+	<!-- <build> -->
+	<!-- <plugins> -->
+	<!-- <plugin> -->
+	<!-- <groupId>org.codehaus.mojo</groupId> -->
+	<!-- <artifactId>exec-maven-plugin</artifactId> -->
+	<!-- <version>1.2.1</version> -->
+	<!-- <executions> -->
+	<!-- <execution> -->
+	<!-- <id>default-cli</id> -->
+	<!-- <configuration> -->
+	<!-- <mainClass>${mainClass}</mainClass> -->
+	<!-- <arguments> -->
+	<!-- <argument> auto-configuration</argument> -->
+	<!-- <argument> home</argument> -->
+	<!-- <argument>${project.build.directory}/home</argument> -->
+	<!-- </arguments> -->
+	<!-- </configuration> -->
+	<!-- </execution> -->
+	<!-- </executions> -->
+	<!-- </plugin> -->
+	<!-- </plugins> -->
+	<!-- </build> -->
+</project>
