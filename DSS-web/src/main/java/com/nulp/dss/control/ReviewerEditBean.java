@@ -1,5 +1,6 @@
 package com.nulp.dss.control;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -15,8 +16,12 @@ import com.nulp.dss.model.Reviewer;
 
 @ManagedBean
 @ViewScoped
-public class ReviewerEditBean {
+public class ReviewerEditBean implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ReviewerDao reviewerDao = new ReviewerDao();
 	private List<Reviewer> reviewers;
 	private Reviewer newReviewer;

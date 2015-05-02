@@ -6,7 +6,6 @@ import com.nulp.dss.util.HibernateUtil;
 
 public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 
-	
 	private Session innerSession;
 
 	@Override

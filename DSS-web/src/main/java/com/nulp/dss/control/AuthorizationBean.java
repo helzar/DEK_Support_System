@@ -2,12 +2,14 @@ package com.nulp.dss.control;
 
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import com.nulp.dss.dao.UserDao;
@@ -16,8 +18,13 @@ import com.nulp.dss.model.User;
 
 @ManagedBean
 @RequestScoped
-public class AuthorizationBean{
+public class AuthorizationBean implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+//	@Inject
 	private UserDao userDao = new UserDao();
 	private String login;
 	private String pass;

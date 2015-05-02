@@ -2,11 +2,14 @@ package com.nulp.dss.dao;
 
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.nulp.dss.model.User;
 
+//@RequestScoped
 public class UserDao extends BaseDaoImpl<User> {
 
 	@Override

@@ -1,5 +1,6 @@
 package com.nulp.dss.control;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,8 +28,12 @@ import com.nulp.dss.util.HibernateUtil;
 
 @ManagedBean
 @ViewScoped
-public class ReviewsEditBean {
+public class ReviewsEditBean implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static String overlappingMessage = "Такий час рецензування вже занятий іншою рецензією";
 	
 	private GraduationDao graduationDao = new GraduationDao();

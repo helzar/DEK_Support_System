@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:h="http://java.sun.com/jsf/html" 
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 	
@@ -92,23 +92,12 @@
 				
 			</h:panelGrid>
 			
-			<h:form id="form25">
+			<h:form id="form25" enctype="multipart/form-data">
 				<p:accordionPanel multiple="true" activeIndex="null" style="width:70%;margin-left:15%;margin-right:15%;margin-bottom:5px;margin-top:5px"
 					rendered="#{diplomasEditBean.displayGroups}">						
 					<p:tab title="Завантаження даних з файлу">
-						
-						<p:panel id="add_doc_panal" header="Завантажити з файлу" style="margin-bottom:5px;margin-top:5px;width:100%">
-				            <p:fileUpload fileUploadListener="#{diplomasEditBean.loadStudentsDoc}" mode="advanced" fileLimit="1" sizeLimit="1000000" showButtons="false" dragDropSupport="true"
-				            	auto="true"
-				            	allowTypes="/(\.|\/)(doc)$/"
-				            	update=":form1:msgs,:form2,:form25,:form3"/>
-				            <p:separator />
-							<h:panelGrid id="groups_grid" cellpadding="5" columns="1">
-					 			<h:outputText value="Файл завантажено." rendered="#{diplomasEditBean.studentsDocFile ne null}"/>
-					        	<p:commandButton value="Завантажити дані з файлу" update=":form1:msgs,:form2,:form25,:form3,:form4,:form5" actionListener="#{diplomasEditBean.parsStudentsDoc}" icon="ui-icon-check" />
-					        </h:panelGrid>
-					    </p:panel>
-				    
+						<h:inputFile id="file" value="#{diplomasEditBean.diplomasFile}"/>
+						<h:commandButton value="Завантажити" action="#{diplomasEditBean.uploadFile}"/>
 				    </p:tab>
 				</p:accordionPanel>
 			</h:form>
@@ -156,13 +145,13 @@
 									
 									<p:outputLabel value="К-сть сторінок розрахунково-пояснювальної записки "/>
 									<p:inputText value="#{student.diploma.numberOfExplanatoryPages}" style="width:96%" validatorMessage="Невірний формат! Введіть число від 1 до 500.">
-										<f:validateDoubleRange minimum="1" maximum="500" />
+										<f:validateDoubleRange minimum="0" maximum="500" />
 									</p:inputText>
 									
 									
 									<p:outputLabel value="К-сть аркушів креслень "/>
 									<p:inputText id="aaa" value="#{student.diploma.numberOfDrawingsPages}" style="width:96%" validatorMessage="Невірний формат! Введіть число від 1 до 500." >
-										<f:validateDoubleRange minimum="1" maximum="500" />
+										<f:validateDoubleRange minimum="0" maximum="500" />
 									</p:inputText>
 									
 												

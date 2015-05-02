@@ -1,8 +1,9 @@
 package com.nulp.dss.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface BaseDao<T> extends AutoCloseable{
+public interface BaseDao<T> extends AutoCloseable, Serializable{
 
 	T getById(Integer id);
 	List<T> getAll();

@@ -7,6 +7,7 @@ import com.nulp.dss.docxmanaging.datacontainers.DataContainerForTableFillerImpl;
 import com.nulp.dss.docxmanaging.docparsing.DocxGenerator;
 import com.nulp.dss.docxmanaging.docparsing.DocxManager;
 import com.nulp.dss.docxmanaging.tablegenerators.TableFiller;
+import com.nulp.dss.docxparser.StudentFileReader;
 
 public class MainClass {
 	private static final Logger LOG = Logger.getLogger(MainClass.class);

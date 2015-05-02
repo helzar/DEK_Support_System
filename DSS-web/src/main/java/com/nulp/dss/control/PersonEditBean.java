@@ -1,5 +1,6 @@
 package com.nulp.dss.control;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -15,8 +16,12 @@ import com.nulp.dss.model.Person;
 
 @ManagedBean
 @ViewScoped
-public class PersonEditBean {
+public class PersonEditBean implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private PersonDao personDao = new PersonDao(); 
 	private List<Person> persons;
 	private Person newPerson;

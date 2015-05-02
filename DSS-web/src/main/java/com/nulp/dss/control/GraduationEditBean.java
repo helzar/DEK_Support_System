@@ -1,5 +1,6 @@
 package com.nulp.dss.control;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +24,12 @@ import com.nulp.dss.model.enums.QuarterEnum;
 
 @ManagedBean
 @ViewScoped
-public class GraduationEditBean {
-	
+public class GraduationEditBean implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private GraduationDao graduationDao = new GraduationDao();
 	private PresentInProtectionDayDao presentInProtectionDayDao = new PresentInProtectionDayDao();
 	private DiplomaDao diplomaDao = new DiplomaDao();

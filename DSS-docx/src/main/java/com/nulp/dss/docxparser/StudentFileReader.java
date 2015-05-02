@@ -37,6 +37,7 @@ public class StudentFileReader {
 	private Group group = null;
 	private Student newStudent = null;
 	private int newStudentCreationState = -1;
+	private int studentPIPReaded = 0;
 	private boolean isFirstRow = true;
 
 	public void readFile(String fileName, Graduation graduation) {
@@ -109,22 +110,27 @@ public class StudentFileReader {
 	}
 	
 	private void manageNewStudent(int columnIndex, int paragraphIndex, String text){
-		if (columnIndex == 1 && paragraphIndex == 0){
+		if (columnIndex == 1){
 			String[] splitedString = text.split(" ");
-			if (splitedString.length >= 3){
-				setNewStudent();
-				newStudent.setlName(splitedString[0]);
-				newStudent.setfName(splitedString[1]);
-				newStudent.setmName(splitedString[2].substring(0, splitedString[2].length() - 1));
+			if (splitedString.length > 0 && studentPIPReaded < 3 && !(splitedString.length == 1 && splitedString[0].length() <= 2) ){
+				if (studentPIPReaded == 0){
+					setNewStudent();
+				}
+				/** Remove \n in the end of paragraph */
+				splitedString[splitedString.length - 1] = splitedString[splitedString.length - 1].substring(0, splitedString[splitedString.length - 1].length() - 1);
+				for (int i = 0; i < splitedString.length; i++){
+					if ( (i + studentPIPReaded) == 0 ) newStudent.setlName(splitedString[i]);
+					if ( (i + studentPIPReaded) == 1 ) newStudent.setfName(splitedString[i]);
+					if ( (i + studentPIPReaded) == 2 ) newStudent.setmName(splitedString[i]);
+				}
 				newStudentCreationState = 1;
-			}
-			else{
-				newStudent = null;
+				studentPIPReaded += splitedString.length;
 			}
 		}
 		else if (newStudentCreationState == 1 && columnIndex == 2 && paragraphIndex == 0){
 			newStudent.getDiploma().setTheme(text.substring(0, text.length() - 1));
 			newStudentCreationState = 2;
+			studentPIPReaded = 0;
 		}
 		else if (newStudentCreationState == 2 && columnIndex == 2 && paragraphIndex == 1){
 			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

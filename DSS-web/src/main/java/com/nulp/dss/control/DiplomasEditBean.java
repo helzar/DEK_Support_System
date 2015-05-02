@@ -3,19 +3,23 @@ package com.nulp.dss.control;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.Part;
 
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -36,8 +40,12 @@ import com.nulp.dss.util.HibernateUtil;
 
 @ManagedBean
 @ViewScoped
-public class DiplomasEditBean {
-	
+public class DiplomasEditBean implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String TEMP_STUDENT_INFO_FILE_NAME = "temp_studs_file";
 	private static final String TEMP_STUDENT_INFO_FILE_EXTENSION = "doc";
 	
@@ -69,9 +77,9 @@ public class DiplomasEditBean {
 
 	private Integer selectedRow;
 	private String studentsDocName;
-	private UploadedFile studentsDocFile;
+	private Part diplomasFile;
 	
-	
+
 	@PostConstruct
 	public void init() {
 		displayGroups = false;
@@ -252,15 +260,15 @@ public class DiplomasEditBean {
 		this.studentsDocName = studentsDocName;
 	}
 
-	public UploadedFile getStudentsDocFile() {
-		return studentsDocFile;
+	public Part getDiplomasFile() {
+		return diplomasFile;
 	}
 
-	public void setStudentsDocFile(UploadedFile studentsDocFile) {
-		this.studentsDocFile = studentsDocFile;
+	public void setDiplomasFile(Part diplomasFile) {
+		this.diplomasFile = diplomasFile;
 	}
+
 	
-
 	public void onYearChange() {
 		quarter = "";
 		groupName = "";
@@ -498,6 +506,41 @@ public class DiplomasEditBean {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 	
+	public void uploadFile() {
+		if (diplomasFile != null){
+
+			File file = new File(TEMP_STUDENT_INFO_FILE_NAME + "." + TEMP_STUDENT_INFO_FILE_EXTENSION);
+
+			if (file.exists()) {
+				file.delete();
+			}
+
+			try (InputStream input = diplomasFile.getInputStream()) {
+				Files.copy(input, file.toPath());
+				new StudentFileReader().readFile(file.getName(), graduation);
+				
+				FacesMessage msg = new FacesMessage("Дані з документа завантажено.");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				loadGroups();
+				
+				String[] updateElementsId = {":form1:msgs", ":form2", ":form25", ":form3", ":form4", ":form5"};
+				for (String elementId: updateElementsId){
+					RequestContext.getCurrentInstance().update(elementId);
+				}
+			} catch (IOException e) {
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Помилка при завантаженні.", "Помилка при завантаженні.");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				e.printStackTrace();
+			}
+
+			diplomasFile = null;
+		}
+		else{
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Документ не обрано.", "Документ не обрано.");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
+	/*
 	public void parsStudentsDoc() throws IOException{
 		groupObj = null;
 		displayStudents = false;
@@ -573,6 +616,7 @@ public class DiplomasEditBean {
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 	}
+	//*/
 	
 	public void onStudentCheckboxEdit() {
 		groupDao.update(groupObj);

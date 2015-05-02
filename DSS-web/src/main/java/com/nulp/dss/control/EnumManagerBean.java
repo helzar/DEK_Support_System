@@ -1,5 +1,6 @@
 package com.nulp.dss.control;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,8 +17,12 @@ import com.nulp.dss.model.enums.RatingEnum;
 
 @ManagedBean
 @SessionScoped
-public class EnumManagerBean {
-	
+public class EnumManagerBean implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Map<String, DiplomaTypeEnum> diplomaTypeEnumMap;
 	private Map<String, AnswerEnum> answerEnumMap;
 	private Map<String, FormEnum> formEnumMap;
@@ -94,8 +99,12 @@ public class EnumManagerBean {
 		return ratingEnumMap;
 	}
 	
-	public static class EnumStringComparator implements Comparator<String>{
+	public static class EnumStringComparator implements Comparator<String>, Serializable{
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private String nullString;
 		private boolean inEnd = false;
 		

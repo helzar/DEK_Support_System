@@ -1,5 +1,6 @@
 package com.nulp.dss.control;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +26,12 @@ import com.nulp.dss.util.HibernateUtil;
 
 @ManagedBean
 @ViewScoped
-public class CommissionEditBean {
-	
+public class CommissionEditBean implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private GraduationDao graduationDao = new GraduationDao();
 	private PersonDao personDao = new PersonDao();
 	private CommissionDao commissionDao = new CommissionDao();
