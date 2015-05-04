@@ -12,6 +12,11 @@ import com.nulp.dss.model.User;
 //@RequestScoped
 public class UserDao extends BaseDaoImpl<User> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public User getById(Integer id) {
 		Session session = this.getSession();

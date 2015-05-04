@@ -17,6 +17,11 @@ import com.nulp.dss.util.HibernateUtil;
 
 public class GraduationDao extends BaseDaoImpl<Graduation> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public Graduation getById(Integer id) {
 		Session session = this.getSession();

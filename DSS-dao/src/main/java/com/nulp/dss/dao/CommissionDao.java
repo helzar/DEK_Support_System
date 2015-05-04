@@ -9,6 +9,11 @@ import com.nulp.dss.model.Commission;
 
 public class CommissionDao extends BaseDaoImpl<Commission> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public Commission getById(Integer id) {
 		Session session = this.getSession();

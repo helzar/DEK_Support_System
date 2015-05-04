@@ -3,11 +3,13 @@ package com.nulp.dss.docxmanaging;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import com.nulp.dss.docxmanaging.datacontainers.DataContainerForTableFillerImpl;
-import com.nulp.dss.docxmanaging.docparsing.DocxGenerator;
-import com.nulp.dss.docxmanaging.docparsing.DocxManager;
-import com.nulp.dss.docxmanaging.tablegenerators.TableFiller;
-import com.nulp.dss.docxparser.StudentFileReader;
+import com.nulp.dss.docxmanaging.container.DataContainerForTableFillerImpl;
+import com.nulp.dss.docxmanaging.container.generator.PaymentFormContainerGenerator;
+import com.nulp.dss.docxmanaging.generation.DocxGenerator;
+import com.nulp.dss.docxmanaging.generation.tablegenerators.TableFiller;
+import com.nulp.dss.docxmanaging.management.DocxManager;
+import com.nulp.dss.docxmanaging.management.PaymentFormManager;
+import com.nulp.dss.docxmanaging.reader.StudentFileReader;
 
 public class MainClass {
 	private static final Logger LOG = Logger.getLogger(MainClass.class);
@@ -20,8 +22,11 @@ public class MainClass {
 //		new DocxManager().generateDocx("input_templates\\testTemplForTableFiller.docx", "output\\testOutputFileForTableFiller.docx",
 //				new DataContainerForTableFillerImpl(), TableFiller.class);
 
-		new DocxManager().margeDocx("input_templates/testTemplForTableFiller.docx", "input_templates/testTemplForTableFiller.docx",
-				"output/margedDoc.docx");
+//		new DocxManager().margeDocx("input_templates/testTemplForTableFiller.docx", "input_templates/testTemplForTableFiller.docx",
+//				"output/margedDoc.docx");
+		
+//		System.out.println(new PaymentFormContainerGenerator().getPaymentFormContainer(28, 2));
+		new PaymentFormManager().generateDocuments(28, 2);
 		
 		LOG.info("END!!!");
 	}

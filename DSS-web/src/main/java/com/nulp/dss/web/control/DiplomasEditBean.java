@@ -1,4 +1,4 @@
-package com.nulp.dss.control;
+package com.nulp.dss.web.control;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import com.nulp.dss.dao.DiplomaDao;
 import com.nulp.dss.dao.GraduationDao;
 import com.nulp.dss.dao.GroupDao;
 import com.nulp.dss.dao.StudentDao;
-import com.nulp.dss.docxparser.StudentFileReader;
+import com.nulp.dss.docxmanaging.reader.StudentFileReader;
 import com.nulp.dss.model.Commission;
 import com.nulp.dss.model.Diploma;
 import com.nulp.dss.model.DiplomaInfo;

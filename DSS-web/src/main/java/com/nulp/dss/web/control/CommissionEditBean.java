@@ -1,4 +1,4 @@
-package com.nulp.dss.control;
+package com.nulp.dss.web.control;
 
 import java.io.Serializable;
 import java.util.ArrayList;

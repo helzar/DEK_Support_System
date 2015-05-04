@@ -1,4 +1,4 @@
-package com.nulp.dss.docxmanaging.tablegenerators;
+package com.nulp.dss.docxmanaging.generation.tablegenerators;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,7 +16,7 @@ import org.docx4j.wml.Tc;
 import org.docx4j.wml.Text;
 import org.docx4j.wml.Tr;
 
-import com.nulp.dss.docxmanaging.datacontainers.DataContainer;
+import com.nulp.dss.docxmanaging.container.DataContainer;
 
 /**
  * Requires SdtBlock tag and a header table row in template after tag

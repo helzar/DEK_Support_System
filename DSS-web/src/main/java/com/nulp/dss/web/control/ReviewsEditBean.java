@@ -1,7 +1,13 @@
-package com.nulp.dss.control;
+package com.nulp.dss.web.control;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,14 +16,19 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+
 import com.nulp.dss.dao.GraduationDao;
 import com.nulp.dss.dao.ReviewDao;
 import com.nulp.dss.dao.ReviewerDao;
+import com.nulp.dss.docxmanaging.management.PaymentFormManager;
 import com.nulp.dss.model.Graduation;
 import com.nulp.dss.model.Group;
 import com.nulp.dss.model.Review;
@@ -25,6 +36,7 @@ import com.nulp.dss.model.Reviewer;
 import com.nulp.dss.model.Student;
 import com.nulp.dss.model.enums.QuarterEnum;
 import com.nulp.dss.util.HibernateUtil;
+import com.nulp.dss.util.Transliterator;
 
 @ManagedBean
 @ViewScoped
@@ -68,6 +80,9 @@ public class ReviewsEditBean implements Serializable{
 	private Group groupObj;
 	private Graduation graduation;
 	
+	private StreamedContent paymentFormsFile;
+	private BufferedInputStream paymentFormsStream;
+	
 	@PostConstruct
 	public void init() {
 		displayGroups = false;
@@ -76,6 +91,17 @@ public class ReviewsEditBean implements Serializable{
 		quarters = getQuartersMap(); 
 		years = getYearsMap(graduationDao.getYearsList());
 	}
+	
+	@PreDestroy
+	public void destroy() {  
+		if (paymentFormsStream != null){
+			try {
+				paymentFormsStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	} 
 	
 	private Map<String, String> getYearsMap(List<Integer> yearsList) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -276,6 +302,11 @@ public class ReviewsEditBean implements Serializable{
 		this.reviewsList = reviewsList;
 	}
 
+	public StreamedContent getPaymentFormsFile() {
+		return paymentFormsFile;
+	}
+	
+
 	public void onYearChange() {
 		quarter = "";
 		groupName = "";
@@ -302,6 +333,38 @@ public class ReviewsEditBean implements Serializable{
 			displayReviewsList = false;
 			displayAddReview = false;
 		}
+	}
+	
+	
+	
+	public void downloadPaymentForms(){
+		if (reviewer != null){
+			try {
+				if (paymentFormsStream != null){
+					paymentFormsStream.close();
+					paymentFormsStream = null;
+				}
+				String filePath = new PaymentFormManager().generateDocuments(graduation.getId(), reviewer.getId());
+				paymentFormsStream = new BufferedInputStream(new FileInputStream(filePath));
+				paymentFormsFile = new DefaultStreamedContent(paymentFormsStream, "docx", getPaymentFormReadableFileName());
+			} catch (Exception e) {
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Не вдалося сформувати документ!", "Не вдалося сформувати документ!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				e.printStackTrace();
+			}
+		}
+		else{
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Рецензента не обрано!", "Рецензента не обрано!");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
+	
+	private String getPaymentFormReadableFileName(){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(graduation.getYear());
+		
+		String fileName = "Бланк оплати " + reviewer.getlName() + " " + reviewer.getfName() + " " + reviewer.getmName() + " за " + calendar.get(Calendar.YEAR) + ".docx";
+		return Transliterator.transliterate(fileName);
 	}
 	
 	private void initFreeStudentsForNewReviewsByGroup(){

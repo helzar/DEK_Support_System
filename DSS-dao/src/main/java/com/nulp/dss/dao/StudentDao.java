@@ -9,6 +9,11 @@ import com.nulp.dss.model.Student;
 
 public class StudentDao extends BaseDaoImpl<Student> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public Student getById(Integer id) {
 		Session session = this.getSession();

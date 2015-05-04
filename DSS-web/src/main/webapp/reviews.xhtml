@@ -77,12 +77,19 @@
 
 				<p:panel id="reviews_panal" header="Рецензії" style="margin:20px;width:1500px;margin-left:12%" visible="#{reviewsEditBean.displayReviews}">
 
-						<h:panelGrid id="years_grid" cellpadding="5" columns="2">
+						<h:panelGrid id="years_grid" cellpadding="5" columns="3">
 							<p:outputLabel value="Рецензент: " />
 				            <p:selectOneMenu value="#{reviewsEditBean.reviewerId}">
 				            	<p:ajax listener="#{reviewsEditBean.onReviewerChange}" update=":form2:reviews_panal,:form3:add_review_panal"/>
 				                <f:selectItems value="#{reviewsEditBean.reviewersWithId}" />
 				            </p:selectOneMenu>
+				            <p:commandButton icon="ui-icon-arrowthick-1-s"
+				            			value="Завантажити бланки оплати для рецензента"
+				                        title="Завантажити бланки оплати для рецензента"
+				                        ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+				                        actionListener="#{reviewsEditBean.downloadPaymentForms}">
+								<p:fileDownload value="#{reviewsEditBean.paymentFormsFile}" />
+    						</p:commandButton>
 						</h:panelGrid>
 
              

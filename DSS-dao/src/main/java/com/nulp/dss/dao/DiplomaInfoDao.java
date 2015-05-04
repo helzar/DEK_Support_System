@@ -9,6 +9,11 @@ import com.nulp.dss.model.DiplomaInfo;
 
 public class DiplomaInfoDao extends BaseDaoImpl<DiplomaInfo> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public DiplomaInfo getById(Integer id) {
 		Session session = this.getSession();

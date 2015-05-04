@@ -10,6 +10,11 @@ import com.nulp.dss.model.Reviewer;
 
 public class ReviewerDao extends BaseDaoImpl<Reviewer> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public Reviewer getById(Integer id) {
 		Session session = this.getSession();

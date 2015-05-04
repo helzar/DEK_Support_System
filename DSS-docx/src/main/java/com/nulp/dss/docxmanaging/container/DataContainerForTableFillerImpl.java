@@ -1,4 +1,4 @@
-package com.nulp.dss.docxmanaging.datacontainers;
+package com.nulp.dss.docxmanaging.container;
 
 import java.util.ArrayList;
 import java.util.Iterator;

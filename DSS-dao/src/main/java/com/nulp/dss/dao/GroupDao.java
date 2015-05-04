@@ -11,6 +11,12 @@ import com.nulp.dss.model.Student;
 public class GroupDao extends BaseDaoImpl<Group> {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	@Override
 	public Group getById(Integer id) {
 		Session session = this.getSession();
@@ -58,6 +64,26 @@ public class GroupDao extends BaseDaoImpl<Group> {
 		query.executeUpdate();
 		
 		closeSession(session);
+	}
+	
+	public Group getByStudentId(int studentId){
+		Session session = this.getSession();
+		Group group = null;
+		
+		Query query = session.createQuery(
+				"SELECT G "
+				+ "FROM Group as G, Student as St "
+				+ "WHERE St.id = :student_id "
+				+ "AND St member of G.students ");
+		query.setParameter("student_id", studentId);
+		@SuppressWarnings("unchecked")
+		List<Group> list = query.list();
+		if (list.size() > 0){
+			group = list.get(0);
+		}
+
+		closeSession(session);
+		return group;
 	}
 
 

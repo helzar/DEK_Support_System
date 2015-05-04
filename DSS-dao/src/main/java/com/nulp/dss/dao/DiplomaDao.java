@@ -6,9 +6,16 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.nulp.dss.model.Diploma;
+import com.nulp.dss.model.Graduation;
 import com.nulp.dss.model.ProtectionDay;
+import com.nulp.dss.model.Reviewer;
 
 public class DiplomaDao extends BaseDaoImpl<Diploma> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public Diploma getById(Integer id) {
@@ -58,6 +65,28 @@ public class DiplomaDao extends BaseDaoImpl<Diploma> {
 		@SuppressWarnings("unchecked")
 		List<Diploma> list = query.list();
 
+		closeSession(session);
+		return list;
+	}
+	
+	public List<Diploma> getDiplomasByReviewerAndGraduation(Reviewer reviewer, Graduation graduation){
+		Session session = this.getSession();
+
+		session.update(reviewer);
+		session.update(graduation);
+		Query query = session.createQuery(
+				"SELECT D "
+				+ "FROM Diploma as D, Graduation as G "
+				+ "WHERE D.review.reviewer.id = :reviewer_id "
+				+ "AND G.id = :graduation_id "
+				+ "AND D.student member of G.groups.students ");
+		
+		query.setParameter("graduation_id", graduation.getId());
+		query.setParameter("reviewer_id", reviewer.getId());
+		
+		@SuppressWarnings("unchecked")
+		List<Diploma> list = query.list();
+		
 		closeSession(session);
 		return list;
 	}

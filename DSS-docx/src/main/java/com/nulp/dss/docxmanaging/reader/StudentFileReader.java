@@ -1,4 +1,4 @@
-package com.nulp.dss.docxparser;
+package com.nulp.dss.docxmanaging.reader;
 
 import java.io.FileInputStream;
 import java.util.regex.Matcher;

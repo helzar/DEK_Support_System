@@ -9,6 +9,11 @@ import com.nulp.dss.model.Review;
 
 public class ReviewDao extends BaseDaoImpl<Review> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public Review getById(Integer id) {
 		Session session = this.getSession();

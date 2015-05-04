@@ -9,6 +9,11 @@ import com.nulp.dss.model.PresentInProtectionDay;
 
 public class PresentInProtectionDayDao extends BaseDaoImpl<PresentInProtectionDay> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public PresentInProtectionDay getById(Integer id) {
 		Session session = this.getSession();

@@ -1,4 +1,4 @@
-package com.nulp.dss.docxmanaging.tablegenerators;
+package com.nulp.dss.docxmanaging.generation.tablegenerators;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,12 +16,12 @@ import org.docx4j.wml.Tc;
 import org.docx4j.wml.Text;
 import org.docx4j.wml.Tr;
 
-import com.nulp.dss.docxmanaging.datacontainers.DataContainer;
+import com.nulp.dss.docxmanaging.container.DataContainer;
 
 /**s
  * Fill predefined in template table
  * First row is header
- * Copies stiles from header row 
+ * Copies stiles from cells
  * @author Vova
  *
  */
@@ -63,8 +63,8 @@ public class TableFiller implements DocxTableGenerator {
 	}
 	
 	private void buildTable(Tbl table, Iterator<ArrayList<String>> rowIterator){
-		Tr headerRow = (Tr) table.getContent().get(0);
-		P[] propertieParagraphs = getPropertieParagraphs(headerRow);
+//		Tr headerRow = (Tr) table.getContent().get(0);
+		P[] propertieParagraphs;// = getPropertieParagraphs(headerRow);
 
 		/** skip header */
 		for (int i = 1; i < table.getContent().size(); i++){
@@ -73,6 +73,8 @@ public class TableFiller implements DocxTableGenerator {
 				break;
 			}
 			Tr row = (Tr)table.getContent().get(i);
+			propertieParagraphs = getPropertieParagraphs(row);
+			
 			ArrayList<String> nextRow = rowIterator.next();
 			for (int j = 0; j < propertieParagraphs.length; j++){
 				Tc cell = (Tc) ( (JAXBElement<?>)(row.getContent().get(j)) ).getValue() ;

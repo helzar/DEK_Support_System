@@ -9,6 +9,11 @@ import com.nulp.dss.model.ProtectionDay;
 
 public class ProtectionDayDao extends BaseDaoImpl<ProtectionDay> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public ProtectionDay getById(Integer id) {
 		Session session = this.getSession();

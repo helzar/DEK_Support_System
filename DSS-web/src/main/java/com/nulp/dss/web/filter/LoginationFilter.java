@@ -1,4 +1,4 @@
-package com.nulp.dss.filter;
+package com.nulp.dss.web.filter;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class LogOutFilter implements Filter {
+public class LoginationFilter implements Filter {
 
 	
 	public void destroy() {}
@@ -26,18 +26,19 @@ public class LogOutFilter implements Filter {
 		if (request instanceof HttpServletRequest) {
 			String url = ((HttpServletRequest) request).getRequestURL().toString();
 		
-			if (url.contains("logout")){
-				if (session.getAttribute("USER") != null){
-					session.removeAttribute("USER");
-				}
-				((HttpServletResponse)response).sendRedirect("singin.xhtml");
+			
+			if (url.contains("singin.xhtml") ^ session.getAttribute("USER") != null){
+				chain.doFilter(request, response);
+			}
+			else if (url.contains("singin.xhtml") && session.getAttribute("USER") != null){
+				((HttpServletResponse)response).sendRedirect("index.xhtml");
 			}
 			else{
-				chain.doFilter(request, response);
+				((HttpServletResponse)response).sendRedirect("singin.xhtml");
 			}
 		}
 		else{
-			chain.doFilter(request, response);
+			((HttpServletResponse)response).sendRedirect("singin.xhtml");
 		}
 	}
 

@@ -1,4 +1,4 @@
-package com.nulp.dss.docxmanaging.docparsing;
+package com.nulp.dss.docxmanaging.generation;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -14,9 +14,9 @@ import org.docx4j.wml.SdtRun;
 import org.docx4j.wml.ObjectFactory;
 import org.docx4j.wml.Text;
 
-import com.nulp.dss.docxmanaging.datacontainers.DataContainer;
-import com.nulp.dss.docxmanaging.tablegenerators.DocxTableGenerator;
-import com.nulp.dss.docxmanaging.tablegenerators.HeaderRowTableCreator;
+import com.nulp.dss.docxmanaging.container.DataContainer;
+import com.nulp.dss.docxmanaging.generation.tablegenerators.DocxTableGenerator;
+import com.nulp.dss.docxmanaging.generation.tablegenerators.HeaderRowTableCreator;
 
 public class DocxGenerator {
 	private static final Logger LOG = Logger.getLogger(DocxGenerator.class);
@@ -28,6 +28,7 @@ public class DocxGenerator {
 	private static final String DEFAULT_TEXT_IF_TAG_NAME_DO_NOT_EXIST = "!TAG_NAME_DO_NOT_EXIST!";
 	private Boolean isCreatingTableStrategyEnabled = false;
 	private String tableTagName;
+	
 	
 	public DocxGenerator(DataContainer dataContainer, Class<? extends DocxTableGenerator> docxTableGeneratorClass) {
 		if (docxTableGeneratorClass != null){
@@ -168,7 +169,7 @@ public class DocxGenerator {
 
 	private void setTagText(Text text, String tagName){
 		String tagText = dataContainer.getTagString(tagName);
-		if (dataContainer != null){
+		if (tagText != null){
 			text.setValue(tagText);
 		}
 		else{
