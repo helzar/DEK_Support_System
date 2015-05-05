@@ -9,6 +9,7 @@ import com.nulp.dss.docxmanaging.generation.DocxGenerator;
 import com.nulp.dss.docxmanaging.generation.tablegenerators.TableFiller;
 import com.nulp.dss.docxmanaging.management.DocxManager;
 import com.nulp.dss.docxmanaging.management.PaymentFormManager;
+import com.nulp.dss.docxmanaging.management.ScheduleFormManager;
 import com.nulp.dss.docxmanaging.reader.StudentFileReader;
 
 public class MainClass {
@@ -26,8 +27,10 @@ public class MainClass {
 //				"output/margedDoc.docx");
 		
 //		System.out.println(new PaymentFormContainerGenerator().getPaymentFormContainer(28, 2));
-		new PaymentFormManager().generateDocuments(28, 2);
+//		new PaymentFormManager().generateDocuments(28, 2);
 		
+		new ScheduleFormManager().generateDocuments(28);
+
 		LOG.info("END!!!");
 	}
 	

@@ -5,6 +5,8 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.nulp.dss.model.Diploma;
+import com.nulp.dss.model.Graduation;
 import com.nulp.dss.model.ProtectionDay;
 
 public class ProtectionDayDao extends BaseDaoImpl<ProtectionDay> {
@@ -41,6 +43,26 @@ public class ProtectionDayDao extends BaseDaoImpl<ProtectionDay> {
 		@SuppressWarnings("unchecked")
 		List<ProtectionDay> list = query.list();
 
+		closeSession(session);
+		return list;
+	}
+	
+	public List<ProtectionDay> getOrderedGraduationDays(Graduation graduation){
+		Session session = this.getSession();
+
+		session.update(graduation);
+		Query query = session.createQuery(
+				"SELECT D "
+				+ "FROM ProtectionDay as D, Graduation as G "
+				+ "WHERE G.id = :graduation_id "
+				+ "AND D member of G.protectionDays "
+				+ "ORDER BY D.day ");
+		
+		query.setParameter("graduation_id", graduation.getId());
+
+		@SuppressWarnings("unchecked")
+		List<ProtectionDay> list = query.list();
+		
 		closeSession(session);
 		return list;
 	}

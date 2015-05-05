@@ -144,7 +144,7 @@ public class PaymentFormContainerGenerator {
 		return builder.toString();
 	}
 	
-	public String getNormalizedTime(int time){
+	private String getNormalizedTime(int time){
 		String timeString = time + "";
 		if (timeString.length() == 1){
 			return "0" + timeString;

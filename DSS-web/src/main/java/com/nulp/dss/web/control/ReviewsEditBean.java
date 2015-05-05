@@ -2,6 +2,7 @@ package com.nulp.dss.web.control;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -80,8 +81,8 @@ public class ReviewsEditBean implements Serializable{
 	private Group groupObj;
 	private Graduation graduation;
 	
-	private StreamedContent paymentFormsFile;
-	private BufferedInputStream paymentFormsStream;
+	private StreamedContent paymentFormFile;
+	private BufferedInputStream paymentFormStream;
 	
 	@PostConstruct
 	public void init() {
@@ -94,9 +95,9 @@ public class ReviewsEditBean implements Serializable{
 	
 	@PreDestroy
 	public void destroy() {  
-		if (paymentFormsStream != null){
+		if (paymentFormStream != null){
 			try {
-				paymentFormsStream.close();
+				paymentFormStream.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -302,8 +303,8 @@ public class ReviewsEditBean implements Serializable{
 		this.reviewsList = reviewsList;
 	}
 
-	public StreamedContent getPaymentFormsFile() {
-		return paymentFormsFile;
+	public StreamedContent getPaymentFormFile() {
+		return paymentFormFile;
 	}
 	
 
@@ -340,13 +341,20 @@ public class ReviewsEditBean implements Serializable{
 	public void downloadPaymentForms(){
 		if (reviewer != null){
 			try {
-				if (paymentFormsStream != null){
-					paymentFormsStream.close();
-					paymentFormsStream = null;
+				if (paymentFormStream != null){
+					paymentFormStream.close();
+					paymentFormStream = null;
 				}
 				String filePath = new PaymentFormManager().generateDocuments(graduation.getId(), reviewer.getId());
-				paymentFormsStream = new BufferedInputStream(new FileInputStream(filePath));
-				paymentFormsFile = new DefaultStreamedContent(paymentFormsStream, "docx", getPaymentFormReadableFileName());
+				if (filePath == null || !new File(filePath).exists()){
+					String message = "Не вдалося сформувати документ, рецензент не рецензував цей захист!";
+					FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, message);
+					FacesContext.getCurrentInstance().addMessage(null, msg);
+					return;
+				}
+				
+				paymentFormStream = new BufferedInputStream(new FileInputStream(filePath));
+				paymentFormFile = new DefaultStreamedContent(paymentFormStream, "docx", getPaymentFormReadableFileName());
 			} catch (Exception e) {
 				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Не вдалося сформувати документ!", "Не вдалося сформувати документ!");
 				FacesContext.getCurrentInstance().addMessage(null, msg);

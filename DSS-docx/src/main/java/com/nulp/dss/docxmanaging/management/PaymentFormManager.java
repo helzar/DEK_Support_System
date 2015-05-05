@@ -16,7 +16,7 @@ public class PaymentFormManager {
 	 * 
 	 * @param graduationId
 	 * @param reviewerId
-	 * @return final document path
+	 * @return final document path, or null if graduation or reviewer do not exist
 	 * @throws Exception
 	 */
 	public String generateDocuments(int graduationId, int reviewerId) throws Exception{
@@ -24,6 +24,9 @@ public class PaymentFormManager {
 		prepareOutputDirectory(outputPath);
 		
 		List<DataContainer> containers = new PaymentFormContainerGenerator().getPaymentFormContainer(graduationId, reviewerId);
+		if (containers == null){
+			return null;
+		}
 		
 		String documentPath;
 		List<String> partPathList = new ArrayList<String>();
@@ -43,7 +46,7 @@ public class PaymentFormManager {
 	public void prepareOutputDirectory(String outputPath){
 		File outputFile = new File(outputPath);
 		if (!outputFile.exists()){
-			new File(outputPath).mkdirs();
+			outputFile.mkdirs();
 		}
 		else{
 			for (File fl: outputFile.listFiles()){

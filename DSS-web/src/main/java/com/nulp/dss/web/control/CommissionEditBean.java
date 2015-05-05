@@ -1,28 +1,40 @@
 package com.nulp.dss.web.control;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+
 import com.nulp.dss.dao.CommissionDao;
 import com.nulp.dss.dao.GraduationDao;
 import com.nulp.dss.dao.PersonDao;
 import com.nulp.dss.dao.ProtectionDayDao;
+import com.nulp.dss.docxmanaging.management.PaymentFormManager;
+import com.nulp.dss.docxmanaging.management.ScheduleFormManager;
 import com.nulp.dss.model.Commission;
 import com.nulp.dss.model.Graduation;
 import com.nulp.dss.model.Person;
 import com.nulp.dss.model.ProtectionDay;
 import com.nulp.dss.model.enums.QuarterEnum;
 import com.nulp.dss.util.HibernateUtil;
+import com.nulp.dss.util.Transliterator;
 
 @ManagedBean
 @ViewScoped
@@ -59,6 +71,10 @@ public class CommissionEditBean implements Serializable{
 
 	private List<ProtectionDay> protectionDayList;
 	
+	private StreamedContent scheduleFormFile;
+	private BufferedInputStream scheduleFormStream;
+	
+	
 	@PostConstruct
 	public void init() {
 		displayCommissions = false;
@@ -67,6 +83,17 @@ public class CommissionEditBean implements Serializable{
 		quarters = getQuartersMap(); 
 		years = getYearsMap(graduationDao.getYearsList());
 	}
+	
+	@PreDestroy
+	public void destroy() {  
+		if (scheduleFormStream != null){
+			try {
+				scheduleFormStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	} 
 	
 	private Map<String, String> getYearsMap(List<Integer> yearsList) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -204,6 +231,10 @@ public class CommissionEditBean implements Serializable{
 
 	public void setProtectionDayList(List<ProtectionDay> protectionDayList) {
 		this.protectionDayList = protectionDayList;
+	}
+
+	public StreamedContent getScheduleFormFile() {
+		return scheduleFormFile;
 	}
 	
 
@@ -431,6 +462,43 @@ public class CommissionEditBean implements Serializable{
 		
 		FacesMessage msg = new FacesMessage("Новий день захисту додано!");
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+	
+	public void downloadScheduleForm(){
+		if (graduation != null){
+			try {
+				if (scheduleFormStream != null){
+					scheduleFormStream.close();
+					scheduleFormStream = null;
+				}
+				String filePath = new ScheduleFormManager().generateDocuments(graduation.getId());
+				if (filePath == null || !new File(filePath).exists()){
+					String message = "Не вдалося сформувати документ, захист не обрано!";
+					FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, message);
+					FacesContext.getCurrentInstance().addMessage(null, msg);
+					return;
+				}
+				
+				scheduleFormStream = new BufferedInputStream(new FileInputStream(filePath));
+				scheduleFormFile = new DefaultStreamedContent(scheduleFormStream, "docx", getScheduleFormReadableFileName());
+			} catch (Exception e) {
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Не вдалося сформувати документ!", "Не вдалося сформувати документ!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				e.printStackTrace();
+			}
+		}
+		else{
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Рецензента не обрано!", "Рецензента не обрано!");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
+	
+	private String getScheduleFormReadableFileName(){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(graduation.getYear());
+		
+		String fileName = "Розклад роботи ДЕК за " + graduation.getQuarter().toString() + " " + calendar.get(Calendar.YEAR) + ".docx";
+		return Transliterator.transliterate(fileName);
 	}
 
 }

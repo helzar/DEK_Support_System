@@ -25,30 +25,41 @@
 				    firstDay: 1, isRTL: false, showMonthAfterYear: false, yearSuffix:'', timeOnlyTitle: 'Тільки Час', timeText: 'Час', hourText: 'Час',
 				    minuteText: 'Хвилина', secondText: 'Секунда', currentText: 'Поточна дата', ampm: false, month: 'Місяць', week: 'тиждень', day: 'день', allDayText: 'Весь День'
 				};
+
+				function start() {
+				    PF('statusDialog').show();
+				}
+				 
+				function stop() {
+				    PF('statusDialog').hide();
+				}
 			</script>
 	
 	
 			<h:form id="form1">
 			    <p:growl id="msgs" showDetail="false" />
+			    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+				    <p:graphicImage name="/static/images/ajax_loading_bar.gif" />
+				</p:dialog>
 	
-					<p:panel header="Виберіть захист" style="margin-bottom:5px;margin-left:30%;margin-top:5px;height:160px;width:40%">
-				        <h:panelGrid columns="2" cellpadding="5">
-				            <p:outputLabel for="year" value="Рік: " />
-				            <p:selectOneMenu id="year" value="#{commissionEditBean.year}" style="width:150px">
-				                <p:ajax listener="#{commissionEditBean.onYearChange}" update="quarter,:form2:commission_panal" />
-				                <f:selectItem itemLabel="Веберіть рік" itemValue="" noSelectionOption="true" />
-				                <f:selectItems value="#{commissionEditBean.years}" />
-				            </p:selectOneMenu>
-				
-							<p:outputLabel for="quarter" value="Чверть: " />
-				            <p:selectOneMenu id="quarter" value="#{commissionEditBean.quarter}" style="width:150px">
-				           		<p:ajax listener="#{commissionEditBean.onSeasonChange}" update=":form2:commission_panal,:form3"/>
-				                <f:selectItem itemLabel="Виберіть чверть" itemValue="" noSelectionOption="true" />
-				                <f:selectItems value="#{commissionEditBean.quarters}" />
-				            </p:selectOneMenu>
-				        </h:panelGrid>
-				 
-				    </p:panel>
+				<p:panel header="Виберіть захист" style="margin-bottom:5px;margin-left:30%;margin-top:5px;height:160px;width:40%">
+			        <h:panelGrid columns="2" cellpadding="5">
+			            <p:outputLabel for="year" value="Рік: " />
+			            <p:selectOneMenu id="year" value="#{commissionEditBean.year}" style="width:150px">
+			                <p:ajax listener="#{commissionEditBean.onYearChange}" update="quarter,:form2:commission_panal" />
+			                <f:selectItem itemLabel="Веберіть рік" itemValue="" noSelectionOption="true" />
+			                <f:selectItems value="#{commissionEditBean.years}" />
+			            </p:selectOneMenu>
+			
+						<p:outputLabel for="quarter" value="Чверть: " />
+			            <p:selectOneMenu id="quarter" value="#{commissionEditBean.quarter}" style="width:150px">
+			           		<p:ajax listener="#{commissionEditBean.onSeasonChange}" update=":form2:commission_panal,:form3"/>
+			                <f:selectItem itemLabel="Виберіть чверть" itemValue="" noSelectionOption="true" />
+			                <f:selectItems value="#{commissionEditBean.quarters}" />
+			            </p:selectOneMenu>
+			        </h:panelGrid>
+			 
+			    </p:panel>
 				    
 			</h:form>
 			
@@ -176,7 +187,14 @@
 							</p:dataTable>
 		
 							<p:separator/>
-							<p:commandButton value="Додати новий день засідання" actionListener="#{commissionEditBean.addNewProtectionDay()}" icon="ui-icon-check" update=":form1:msgs,:form3"/>				
+							<p:commandButton value="Додати новий день засідання" actionListener="#{commissionEditBean.addNewProtectionDay()}" icon="ui-icon-check" update=":form1:msgs,:form3"/>
+							<p:commandButton icon="ui-icon-arrowthick-1-s" style="margin-left:15px;"
+				            			value="Завантажити бланки оплати для рецензента"
+				                        title="Завантажити бланки оплати для рецензента"
+				                        ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+				                        actionListener="#{commissionEditBean.downloadScheduleForm}">
+								<p:fileDownload value="#{commissionEditBean.scheduleFormFile}" />
+    						</p:commandButton>				
 			            
 				</p:panel>
 

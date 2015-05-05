@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class PaymentFormContainer implements DataContainer {
-	private static final String CREATING_TABLE_TAG_NAME = "students_table";
-	private static final int COLLUMN_NUMBER = 10;
+public class ScheduleFormContainer implements DataContainer {
+	private static final String CREATING_TABLE_TAG_NAME = "schedule_table";
+	private static final int COLLUMN_NUMBER = 5;
 	private Map<String, String> tagsMap;
 	private List<ArrayList<String>> table; 
 
 	
-	public PaymentFormContainer(Map<String, String> tagsMap,
+	public ScheduleFormContainer(Map<String, String> tagsMap,
 			List<ArrayList<String>> table) {
 		super();
 		this.tagsMap = tagsMap;
@@ -30,22 +30,10 @@ public class PaymentFormContainer implements DataContainer {
 
 	/**
 	 * @return 
-	 * 		empty string - if tag do not exist
-	 * 		'-' - if field (in DB) is empty string or null
 	 */
 	@Override
 	public String getTagString(String tagName) {
-		if (!tagsMap.containsKey(tagName)){
-			return null;
-		}
-		else {
-			if (tagsMap.get(tagName) == null || tagsMap.get(tagName).isEmpty()){
-				return "-";
-			}
-			else {
-				return tagsMap.get(tagName);
-			}
-		}
+		return tagsMap.get(tagName);
 	}
 
 	@Override
@@ -66,11 +54,5 @@ public class PaymentFormContainer implements DataContainer {
 		else{
 			return 0;
 		}
-	}
-
-	@Override
-	public String toString() {
-		return "PaymentFormContainer [tagsMap=" + tagsMap + ", \ntable=" + table
-				+ "]";
 	}
 }
