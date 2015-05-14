@@ -367,11 +367,11 @@ public class DiplomasEditBean implements Serializable{
 			Date date = cld.getTime();
 		
 			graduation.setYear(date);
-			graduation.setQuarter(QuarterEnum.autumn);
-			commission = new Commission();
-			graduation.setCommission(commission);
-			commission.setGraduation(graduation);
-			graduationDao.insert(graduation);
+//			graduation.setQuarter(QuarterEnum.autumn);
+//			commission = new Commission();
+//			graduation.setCommission(commission);
+//			commission.setGraduation(graduation);
+//			graduationDao.insert(graduation);
 	
 			graduation.setQuarter(QuarterEnum.summer);
 			commission = new Commission();

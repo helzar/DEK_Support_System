@@ -21,6 +21,7 @@ import com.nulp.dss.model.Graduation;
 import com.nulp.dss.model.Group;
 import com.nulp.dss.model.Review;
 import com.nulp.dss.model.Student;
+import com.nulp.dss.util.GroupNameManager;
 import com.nulp.dss.util.HibernateUtil;
 
 //Клас Range, екстендить:
@@ -192,7 +193,7 @@ public class StudentFileReader {
 	private String cleanGroupName(String groupName){
 		Matcher m = patternForGroupName.matcher(groupName);
 		if (m.find()){
-			return m.group(1);
+			return GroupNameManager.cleanGroupName(m.group(1));
 		}
 		return null;
 	}

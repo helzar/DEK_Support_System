@@ -1,7 +1,7 @@
 package com.nulp.dss.model.enums;
 
 public enum QuarterEnum {
-	summer("літо"), autumn("осінь"), winter("зима");
+	summer("літо"), winter("зима");
 	
 	private String name;
 	

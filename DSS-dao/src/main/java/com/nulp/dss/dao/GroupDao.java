@@ -86,5 +86,20 @@ public class GroupDao extends BaseDaoImpl<Group> {
 		return group;
 	}
 
+	public long getGroupCount(int groupId){
+		Session session = this.getSession();
+
+		Query query = session.createQuery(
+				"SELECT count(*) "
+				+ "FROM Group as G, Student as St "
+				+ "WHERE G.id = :group_id "
+				+ "AND St member of G.students "
+				);
+		query.setParameter("group_id", groupId);
+		Long count = (Long)query.uniqueResult();
+
+		closeSession(session);
+		return count.longValue();
+	}
 
 }

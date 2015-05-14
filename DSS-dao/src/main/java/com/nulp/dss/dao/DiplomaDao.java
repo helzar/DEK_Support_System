@@ -79,7 +79,8 @@ public class DiplomaDao extends BaseDaoImpl<Diploma> {
 				+ "FROM Diploma as D, Graduation as G "
 				+ "WHERE D.review.reviewer.id = :reviewer_id "
 				+ "AND G.id = :graduation_id "
-				+ "AND D.student member of G.groups.students ");
+				+ "AND D.student member of G.groups.students "
+				+ "ORDER BY D.review.date ");
 		
 		query.setParameter("graduation_id", graduation.getId());
 		query.setParameter("reviewer_id", reviewer.getId());
