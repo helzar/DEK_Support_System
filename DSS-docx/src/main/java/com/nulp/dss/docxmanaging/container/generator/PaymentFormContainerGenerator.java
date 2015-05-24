@@ -51,7 +51,7 @@ public class PaymentFormContainerGenerator {
 		Reviewer reviewer = new ReviewerDao().getById(reviewerId);
 		
 		if (graduation == null || reviewer == null){
-			LOG.warn("Graduation or reviewer do not exists! Reviewer id - " + reviewer + ", graduation id - " + graduation);
+			LOG.warn("Graduation or reviewer do not exists! Reviewer id - " + reviewerId + ", graduation id - " + graduationId);
 			return null;
 		}
 		Map<String, String> tagsMap = getTagsMap(reviewer);

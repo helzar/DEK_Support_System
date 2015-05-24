@@ -29,7 +29,7 @@ public class MainClass {
 //		System.out.println(new PaymentFormContainerGenerator().getPaymentFormContainer(28, 2));
 //		new PaymentFormManager().generateDocuments(30, 2);
 		
-//		new ScheduleFormManager().generateDocuments(33);
+		new ScheduleFormManager().generateDocuments(33);
 
 		LOG.info("END!!!");
 	}

@@ -47,33 +47,35 @@
 			
 			<h:form id="form2">
 
-				<p:panel id="day_commision_info_panal" header="Комісія" style="margin:20px;width:1500px;margin-left:12%" visible="#{graduationEditBean.displayAllGraduationDay}">
-				
-					<p:dataTable var="presentInProtectionDay" value="#{graduationEditBean.protectionDay.presentInProtectionDaySet}"
-						resizableColumns="true">
-						
-						<f:facet name="header">
-				       		Список членів комісії
-				  		</f:facet>
+				<p:accordionPanel id="day_commision_info_panal"  style="margin:20px;width:1500px;margin-left:12%"
+					rendered="#{graduationEditBean.displayAllGraduationDay}">
+					
+					<p:tab title="Комісія">				
+						<p:dataTable var="presentInProtectionDay" value="#{graduationEditBean.protectionDay.presentInProtectionDaySet}"
+							resizableColumns="true">
+							
+							<f:facet name="header">
+					       		Список членів комісії
+					  		</f:facet>
+	
+							
+							<p:column headerText="Член комісії">
+								<h:outputText
+									value="#{presentInProtectionDay.person.lName} #{presentInProtectionDay.person.fName} #{presentInProtectionDay.person.mName}"
+									style="width:96%"/>
+							</p:column>
+							
+							<p:column headerText="Присутній у день захисту">
+								<p:selectBooleanCheckbox value="#{presentInProtectionDay.isPresent}">
+									<p:ajax update=":form1:msgs,:form2" listener="#{graduationEditBean.onPresentPersonEdit(presentInProtectionDay)}" />
+								</p:selectBooleanCheckbox>
+							</p:column>
+							
+							
+						</p:dataTable>
+					</p:tab>
+				</p:accordionPanel>
 
-						
-						<p:column headerText="Член комісії">
-							<h:outputText
-								value="#{presentInProtectionDay.person.lName} #{presentInProtectionDay.person.fName} #{presentInProtectionDay.person.mName}"
-								style="width:96%"/>
-						</p:column>
-						
-						<p:column headerText="Присутній у день захисту">
-							<p:selectBooleanCheckbox value="#{presentInProtectionDay.isPresent}">
-								<p:ajax update=":form1:msgs,:form2" listener="#{graduationEditBean.onPresentPersonEdit(presentInProtectionDay)}" />
-							</p:selectBooleanCheckbox>
-						</p:column>
-						
-						
-					</p:dataTable>
-
-				</p:panel>
-				
 				<p:panel id="day_stids_info_panal" header="Студенти, що захищаються" style="margin:20px;width:1500px;margin-left:12%" visible="#{graduationEditBean.displayAllGraduationDay}">
 				
 					<p:dataTable var="diploma" value="#{graduationEditBean.protectionDay.diplomas}"

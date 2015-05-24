@@ -15,9 +15,22 @@
 			<ui:define name="content">
 			<div style="background-color: #F1F1F1;">
 	
+			<script>
+				function start() {
+				    PF('statusDialog').show();
+				}
+				 
+				function stop() {
+				    PF('statusDialog').hide();
+				}
+			</script>
+	
 	
 			<h:form id="form1">
 			    <p:growl id="msgs" showDetail="false" />
+			    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+				    <p:graphicImage name="/static/images/ajax_loading_bar.gif" />
+				</p:dialog>
 			 
 				<h:panelGrid id="years_grid" cellpadding="5" columns="2" style="margin-left:18%;margin-right:18%;width:64%">
 				    <p:panel header="Виберіть захист" style="margin-bottom:5px;margin-top:5px;margin-right:1%;height:160px;width:99%">
@@ -94,11 +107,26 @@
 			
 			<h:form id="form25" enctype="multipart/form-data">
 				<p:accordionPanel multiple="true" activeIndex="null" style="width:70%;margin-left:15%;margin-right:15%;margin-bottom:5px;margin-top:5px"
-					rendered="#{diplomasEditBean.displayGroups}">						
-					<p:tab title="Завантаження даних з файлу">
-						<h:inputFile id="file" value="#{diplomasEditBean.diplomasFile}"/>
-						<h:commandButton value="Завантажити" action="#{diplomasEditBean.uploadFile}"/>
-				    </p:tab>
+					rendered="#{diplomasEditBean.displayGroups}">
+						<p:tab title="Додаткові дії">
+							<h:panelGrid cellpadding="5" columns="2">
+								<h:inputFile id="file" value="#{diplomasEditBean.diplomasFile}" />
+								<h:commandButton value="Завантажити дані з файлу"
+									action="#{diplomasEditBean.uploadFile}" />
+							</h:panelGrid>
+							<h:panelGrid cellpadding="5" columns="1">
+								<p:separator/>	
+			
+								<p:commandButton icon="ui-icon-arrowthick-1-s"
+									value="Завантажити статистику захисту"
+									title="Завантажити статистику захисту" ajax="false"
+									onclick="PrimeFaces.monitorDownload(start, stop);"
+									actionListener="#{diplomasEditBean.downloadStatistic}">
+									<p:fileDownload value="#{diplomasEditBean.statisticFile}" />
+								</p:commandButton>
+							</h:panelGrid>
+						</p:tab>
+
 				</p:accordionPanel>
 			</h:form>
 				
@@ -192,7 +220,7 @@
 									
 									
 									<p:outputLabel value="Захищено кваліфікаційних робіт " />
-									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.isprotected}"/>
+									<p:selectBooleanCheckbox value="#{student.diploma.diplomaInfo.isProtected}"/>
 									
 									
 									<p:outputLabel value="Виконано з використанням пакетів прикладних програм " />

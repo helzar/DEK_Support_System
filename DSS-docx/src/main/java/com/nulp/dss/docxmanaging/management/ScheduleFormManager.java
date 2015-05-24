@@ -31,7 +31,7 @@ public class ScheduleFormManager {
 		}
 	}
 	
-	public void prepareOutputDirectory(String outputDirectoryPath, String outputFilePath){
+	private void prepareOutputDirectory(String outputDirectoryPath, String outputFilePath){
 		File outputDirectoryFile = new File(outputDirectoryPath);
 		if (!outputDirectoryFile.exists()){
 			outputDirectoryFile.mkdirs();

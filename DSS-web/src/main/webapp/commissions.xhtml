@@ -140,12 +140,14 @@
 
 			         	
 							<p:dataTable var="pDay" value="#{commissionEditBean.protectionDayList}"
-								
+								editable="true" editMode="cell"
 								resizableColumns="true">
 								
 								<f:facet name="header">
 						       		Список рецензій
 						  		</f:facet>
+						  		
+						  		<p:ajax event="cellEdit" listener="#{commissionEditBean.onSheduleCellEdit}" update=":form1:msgs" />
 		
 								
 								<p:column headerText="Дата засідання" sortBy="#{pDay.day}">
@@ -169,11 +171,16 @@
 									</p:calendar>
 								</p:column>
 								
-								
 								<p:column headerText="Аудиторія">
-									<h:outputText value="#{pDay.auditorium}" style="width:96%"/>
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{pDay.auditorium}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{pDay.auditorium}" style="width:96%" label="Year" />
+										</f:facet>
+									</p:cellEditor>
 								</p:column>
-								
 								
 								
 								<p:column  headerText="Видалити">

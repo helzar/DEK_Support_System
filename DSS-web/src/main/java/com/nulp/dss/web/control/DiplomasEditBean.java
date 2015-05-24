@@ -1,6 +1,8 @@
 package com.nulp.dss.web.control;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -10,9 +12,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -20,14 +22,15 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.Part;
 
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import com.nulp.dss.dao.DiplomaDao;
 import com.nulp.dss.dao.GraduationDao;
 import com.nulp.dss.dao.GroupDao;
 import com.nulp.dss.dao.StudentDao;
 import com.nulp.dss.docxmanaging.reader.StudentFileReader;
+import com.nulp.dss.excelmanaging.management.DEKResultTableManager;
 import com.nulp.dss.model.Commission;
 import com.nulp.dss.model.Diploma;
 import com.nulp.dss.model.DiplomaInfo;
@@ -37,6 +40,7 @@ import com.nulp.dss.model.Review;
 import com.nulp.dss.model.Student;
 import com.nulp.dss.model.enums.QuarterEnum;
 import com.nulp.dss.util.HibernateUtil;
+import com.nulp.dss.util.Transliterator;
 
 @ManagedBean
 @ViewScoped
@@ -79,6 +83,9 @@ public class DiplomasEditBean implements Serializable{
 	private String studentsDocName;
 	private Part diplomasFile;
 	
+	private StreamedContent statisticFile;
+	private BufferedInputStream statisticFileStream;
+	
 
 	@PostConstruct
 	public void init() {
@@ -93,6 +100,17 @@ public class DiplomasEditBean implements Serializable{
 		quarters = getQuartersMap(); 
 		years = getYearsMap(graduationDao.getYearsList());
 	}
+	
+	@PreDestroy
+	public void destroy() {  
+		if (statisticFileStream != null){
+			try {
+				statisticFileStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	} 
 
 	private Map<String, String> getYearsMap(List<Integer> yearsList) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -268,7 +286,11 @@ public class DiplomasEditBean implements Serializable{
 		this.diplomasFile = diplomasFile;
 	}
 
+	public StreamedContent getStatisticFile() {
+		return statisticFile;
+	}
 	
+
 	public void onYearChange() {
 		quarter = "";
 		groupName = "";
@@ -621,5 +643,42 @@ public class DiplomasEditBean implements Serializable{
 	public void onStudentCheckboxEdit() {
 		groupDao.update(groupObj);
     }
+	
+	public void downloadStatistic(){
+		if (graduation != null){
+			try {
+				if (statisticFileStream != null){
+					statisticFileStream.close();
+					statisticFileStream = null;
+				}
+				String filePath = new DEKResultTableManager().generate(graduation.getId(), graduation.getQuarter());
+				if (filePath == null || !new File(filePath).exists()){
+					String message = "Не вдалося сформувати документ!";
+					FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, message);
+					FacesContext.getCurrentInstance().addMessage(null, msg);
+					return;
+				}
+				
+				statisticFileStream = new BufferedInputStream(new FileInputStream(filePath));
+				statisticFile = new DefaultStreamedContent(statisticFileStream, "docx", getPaymentFormReadableFileName());
+			} catch (Exception e) {
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Не вдалося сформувати документ!", "Не вдалося сформувати документ!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				e.printStackTrace();
+			}
+		}
+		else{
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Рік та сезон захисту обрано!", "Рік та сезон захисту обрано!");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
+	
+	private String getPaymentFormReadableFileName(){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(graduation.getYear());
+		
+		String fileName = "Статистика за " + graduation.getQuarter() + " " + calendar.get(Calendar.YEAR) + ".xls";
+		return Transliterator.transliterate(fileName);
+	}
 	
 }

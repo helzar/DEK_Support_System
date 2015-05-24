@@ -27,7 +27,7 @@ public class DiplomaInfo {
 	private Boolean allowed;
 	
 	@Column(name = "protected")
-	private Boolean isprotected;
+	private Boolean isProtected;
 	
 	@Column(name = "software_used")
 	private Boolean softwareUsed;
@@ -79,12 +79,12 @@ public class DiplomaInfo {
 		this.allowed = allowed;
 	}
 
-	public Boolean getIsprotected() {
-		return isprotected;
+	public Boolean getIsProtected() {
+		return isProtected;
 	}
 
-	public void setIsprotected(Boolean isprotected) {
-		this.isprotected = isprotected;
+	public void setIsProtected(Boolean isprotected) {
+		this.isProtected = isprotected;
 	}
 
 	public Boolean getSoftwareUsed() {
@@ -204,7 +204,7 @@ public class DiplomaInfo {
 	@Override
 	public String toString() {
 		return "DiplomaInfo [id=" + id + ", allowed=" + allowed
-				+ ", isprotected=" + isprotected + ", softwareUsed="
+				+ ", isprotected=" + isProtected + ", softwareUsed="
 				+ softwareUsed + ", researchType=" + researchType
 				+ ", withRealTechnologicalDevelopments="
 				+ withRealTechnologicalDevelopments

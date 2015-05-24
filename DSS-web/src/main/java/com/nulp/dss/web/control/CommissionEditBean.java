@@ -19,6 +19,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -32,6 +33,7 @@ import com.nulp.dss.model.Commission;
 import com.nulp.dss.model.Graduation;
 import com.nulp.dss.model.Person;
 import com.nulp.dss.model.ProtectionDay;
+import com.nulp.dss.model.Reviewer;
 import com.nulp.dss.model.enums.QuarterEnum;
 import com.nulp.dss.util.HibernateUtil;
 import com.nulp.dss.util.Transliterator;
@@ -499,6 +501,26 @@ public class CommissionEditBean implements Serializable{
 		
 		String fileName = "Розклад роботи ДЕК за " + graduation.getQuarter().toString() + " " + calendar.get(Calendar.YEAR) + ".docx";
 		return Transliterator.transliterate(fileName);
+	}
+	
+	
+	public void onSheduleCellEdit(CellEditEvent event) {
+		
+		updateAllSheduleDays();
+		
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+         
+        if(newValue != null && !newValue.equals(oldValue)) {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Значення змінено. З " + oldValue + " у " + newValue, "Змінено");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
+    }
+	
+	private void updateAllSheduleDays(){
+		for (ProtectionDay pd: protectionDayList){
+			protectionDayDao.update(pd);
+		}
 	}
 
 }

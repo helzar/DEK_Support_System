@@ -19,6 +19,7 @@ import com.nulp.dss.model.ProtectionDay;
 import com.nulp.dss.model.enums.QuarterEnum;
 import com.nulp.dss.util.GroupNameManager;
 import com.nulp.dss.util.HibernateUtil;
+import com.nulp.dss.util.StringManager;
 import com.nulp.dss.util.enums.DiplomaTypeEnum;
 
 public class ScheduleFormContainerGenerator {
@@ -223,7 +224,7 @@ public class ScheduleFormContainerGenerator {
 		addToListIfNotZero(textList, container.other, "", " студентів з НКЦ");
 
 		int total = container.specialist + container.master + container.other;
-		return total + " студенти - " + formateSequenceString(textList);
+		return total + " студенти - " + StringManager.formateSequenceString(textList);
 	}
 	
 	private void addToListIfNotZero(List<String> textList, int value, String startText, String endText){
@@ -253,7 +254,7 @@ public class ScheduleFormContainerGenerator {
 		addToListIfNotEmpty(textList, getAbsentiaString(groups));
 		addToListIfNotEmpty(textList, getOthersString(groups));
 
-		return formateSequenceString(textList);
+		return StringManager.formateSequenceString(textList);
 	}
 	
 	private void addToListIfNotEmpty(List<String> textList, String text){
@@ -270,7 +271,7 @@ public class ScheduleFormContainerGenerator {
 			}
 		}
 
-		return formateSequenceString(masters, "магістри ");
+		return StringManager.formateSequenceString(masters, "магістри ");
 	}
 	
 	private String getSpesialistsString(List<Group> groups){
@@ -281,7 +282,7 @@ public class ScheduleFormContainerGenerator {
 			}
 		}
 
-		return formateSequenceString(spesialists, "спеціалісти ");
+		return StringManager.formateSequenceString(spesialists, "спеціалісти ");
 	}
 	
 	private String getAbsentiaString(List<Group> groups){
@@ -294,45 +295,7 @@ public class ScheduleFormContainerGenerator {
 			}
 		}
 		
-		return formateSequenceString(absentia, "магістри та спеціалісти заочної форми (", ")");
-	}
-	
-	private String formateSequenceString(List<String> textList, String startText, String endText){
-		String text = formateSequenceString(textList);
-		if (!text.isEmpty()){
-			return startText + text + endText;
-		} else{
-			return "";
-		}
-	}
-	
-	private String formateSequenceString(List<String> textList, String startText){
-		String text = formateSequenceString(textList);
-		if (!text.isEmpty()){
-			return startText + text;
-		} else{
-			return "";
-		}
-	}
-	
-	private String formateSequenceString(List<String> textList){
-		StringBuilder builder = new StringBuilder();
-		
-		if (textList.isEmpty()){
-			return "";
-		}
-		
-		builder.append(textList.get(0));
-		if (textList.size() >= 2){
-			for (int i = 1; i < (textList.size() - 1); i++){
-				builder.append(", ");
-				builder.append(textList.get(i));
-			}
-			builder.append(" та ");
-			builder.append(textList.get(textList.size() - 1));
-		}
-		
-		return builder.toString();
+		return StringManager.formateSequenceString(absentia, "магістри та спеціалісти заочної форми (", ")");
 	}
 	
 	private String getOthersString(List<Group> groups){
