@@ -166,18 +166,24 @@
 			<h:form id="form3">
 				<p:panel id="add_review_panal" header="Додати рецензію" style="margin-bottom:10px;margin-top:10px;width:800px;margin-left:12%"
 						 visible="#{reviewsEditBean.displayAddReview}">
-			        
-			        <h:panelGrid id="years_grid" cellpadding="5" columns="2">
-				        
-				        <p:outputLabel value="Стедент: " />
-				        <p:selectOneMenu value="#{reviewsEditBean.freeStudentForNewReviewId}">
-				            <f:selectItems value="#{reviewsEditBean.freeStudentsForNewReviewsWithId}" />
-				        </p:selectOneMenu>
-				        
-				        <p:commandButton value="Додати рецензію" actionListener="#{reviewsEditBean.addNewReview()}" icon="ui-icon-check" update=":form1:msgs,:form2:reviews_panal,:form3:add_review_panal"/>
-			        </h:panelGrid>
-			        
-			    </p:panel>
+
+					<h:panelGrid id="years_grid" cellpadding="5" columns="2">
+
+						<p:outputLabel value="Стедент: " />
+						<p:selectOneMenu
+							value="#{reviewsEditBean.freeStudentForNewReviewId}">
+							<f:selectItems
+								value="#{reviewsEditBean.freeStudentsForNewReviewsWithId}" />
+						</p:selectOneMenu>
+						
+						<p:commandButton value="Додати рецензію"
+							actionListener="#{reviewsEditBean.addNewReview()}"
+							icon="ui-icon-check"
+							update=":form1:msgs,:form2:reviews_panal,:form3:add_review_panal" />
+							
+					</h:panelGrid>
+
+				</p:panel>
 			</h:form>
 	
 	

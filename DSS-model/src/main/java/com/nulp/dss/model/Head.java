@@ -1,5 +1,6 @@
 package com.nulp.dss.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Head {
+public class Head implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

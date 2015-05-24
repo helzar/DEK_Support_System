@@ -138,8 +138,8 @@
 
 				<p:panel id="timetable_panal" header="Розклад засідань" style="margin:20px;width:1500px;margin-left:12%" visible="#{commissionEditBean.displayCommissions}">
 
-			         	
-							<p:dataTable var="pDay" value="#{commissionEditBean.protectionDayList}"
+
+							<p:dataTable var="pDay" value="#{commissionEditBean.protectionDayList}" id="daysTable"
 								editable="true" editMode="cell"
 								resizableColumns="true">
 								
@@ -147,7 +147,7 @@
 						       		Список рецензій
 						  		</f:facet>
 						  		
-						  		<p:ajax event="cellEdit" listener="#{commissionEditBean.onSheduleCellEdit}" update=":form1:msgs" />
+						  		<p:ajax event="cellEdit" listener="#{commissionEditBean.onSheduleCellEdit}" update=":form1:msgs"/>
 		
 								
 								<p:column headerText="Дата засідання" sortBy="#{pDay.day}">
@@ -164,8 +164,21 @@
 									</p:calendar>
 								</p:column>
 								
+								<p:column headerText="Кількість студентів">
+										<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{pDay.numberOfStudents}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{pDay.numberOfStudents}" style="width:96%" update=":form1:msgs,:form3">
+												<p:ajax event="change" update=":form1:msgs,:form3" listener="#{commissionEditBean.onSheduleCellEdit(pDay)}"/>
+											</p:inputText>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								
 								<p:column headerText="Час кінця">
-									<p:calendar value="#{pDay.endTime}" pattern="HH:mm" timeOnly="true">
+									<p:calendar value="#{pDay.endTime}" pattern="HH:mm" timeOnly="true" id="endTimeColumnId">
 										<p:ajax event="change" update=":form1:msgs,:form3" listener="#{commissionEditBean.onProtectionDayEndTimeUpdate(pDay)}" />
 										<p:ajax event="dateSelect" update=":form1:msgs,:form3" listener="#{commissionEditBean.onProtectionDayEndTimeUpdate(pDay)}" />
 									</p:calendar>
@@ -201,8 +214,19 @@
 				                        ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
 				                        actionListener="#{commissionEditBean.downloadScheduleForm}">
 								<p:fileDownload value="#{commissionEditBean.scheduleFormFile}" />
-    						</p:commandButton>				
-			            
+    						</p:commandButton>	
+    						<br/>
+
+							<h:panelGrid cellpadding="5" columns="2">
+								<p:inputText id="addGroup"
+									value="#{commissionEditBean.auditoriumToCopy}" />
+
+								<p:commandButton value="Копіювати аудиторію"
+									update=":form1:msgs,:form3"
+									actionListener="#{commissionEditBean.copyAuditorium}"
+									icon="ui-icon-check" />
+							</h:panelGrid>
+
 				</p:panel>
 
 			</h:form>

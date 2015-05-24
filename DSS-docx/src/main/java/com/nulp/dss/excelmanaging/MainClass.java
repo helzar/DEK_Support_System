@@ -18,11 +18,11 @@ public class MainClass {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
 		
-//		fillGiplomaInfoWithTestData(30);
-//		fillGiplomaInfoWithTestData(33);
+		fillGiplomaInfoWithTestData(30);
+		fillGiplomaInfoWithTestData(33);
 		
 		// 2015 -33   2014 -30
-		new DEKResultTableManager().generate(30, QuarterEnum.winter);
+//		new DEKResultTableManager().generate(30, QuarterEnum.winter);
 		
 		System.out.println("END");
 	}

@@ -1,5 +1,6 @@
 package com.nulp.dss.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +22,8 @@ import javax.persistence.TemporalType;
 import com.nulp.dss.model.enums.QuarterEnum;
 
 @Entity
-public class Graduation {
+public class Graduation implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

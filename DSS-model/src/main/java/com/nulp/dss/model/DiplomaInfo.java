@@ -1,5 +1,7 @@
 package com.nulp.dss.model;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +17,8 @@ import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "diploma_info")
-public class DiplomaInfo {
+public class DiplomaInfo implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "diploma_id")

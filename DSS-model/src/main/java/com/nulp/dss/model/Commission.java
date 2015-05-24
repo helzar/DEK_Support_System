@@ -1,5 +1,6 @@
 package com.nulp.dss.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +21,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 @Entity
-public class Commission {
+public class Commission implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "id_graduation")

@@ -1,5 +1,6 @@
 package com.nulp.dss.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +23,8 @@ import com.nulp.dss.model.enums.FormEnum;
 import com.nulp.dss.model.enums.RatingEnum;
 
 @Entity
-public class Diploma {
+public class Diploma implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,5 +1,7 @@
 package com.nulp.dss.model;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,7 +16,8 @@ import javax.persistence.ManyToOne;
 import com.nulp.dss.model.enums.AnswerEnum;
 
 @Entity
-public class Question {
+public class Question implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

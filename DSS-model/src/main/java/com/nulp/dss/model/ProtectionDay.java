@@ -1,5 +1,6 @@
 package com.nulp.dss.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,10 +18,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "protection_day")
-public class ProtectionDay {
+public class ProtectionDay implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,6 +41,9 @@ public class ProtectionDay {
 	private Date endTime;
 
 	private String auditorium;
+	
+	@Transient
+	private Integer numberOfStudents;
 	
 	@Column(name = "reserve_day")
 	private Boolean reserveDay;
@@ -125,6 +131,14 @@ public class ProtectionDay {
 
 	public void setDiplomas(Set<Diploma> diplomas) {
 		this.diplomas = diplomas;
+	}
+
+	public Integer getNumberOfStudents() {
+		return numberOfStudents;
+	}
+
+	public void setNumberOfStudents(Integer numberOfStudents) {
+		this.numberOfStudents = numberOfStudents;
 	}
 
 	@Override

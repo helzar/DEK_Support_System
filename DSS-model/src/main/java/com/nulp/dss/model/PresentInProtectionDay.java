@@ -1,5 +1,6 @@
 package com.nulp.dss.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +18,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "present_in_protection_day")
-public class PresentInProtectionDay {
+public class PresentInProtectionDay implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -41,11 +44,9 @@ import com.nulp.dss.util.Transliterator;
 @ManagedBean
 @ViewScoped
 public class CommissionEditBean implements Serializable{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	private static final long ONE_MINUTE_IN_MILLIS=60000;
+	
 	private GraduationDao graduationDao = new GraduationDao();
 	private PersonDao personDao = new PersonDao();
 	private CommissionDao commissionDao = new CommissionDao();
@@ -70,6 +71,7 @@ public class CommissionEditBean implements Serializable{
 	private String newHeadId;
 	private String newSecretaryId;
 	private String newPersonId;
+	private String auditoriumToCopy;
 
 	private List<ProtectionDay> protectionDayList;
 	
@@ -238,6 +240,14 @@ public class CommissionEditBean implements Serializable{
 	public StreamedContent getScheduleFormFile() {
 		return scheduleFormFile;
 	}
+
+	public String getAuditoriumToCopy() {
+		return auditoriumToCopy;
+	}
+
+	public void setAuditoriumToCopy(String auditoriumToCopy) {
+		this.auditoriumToCopy = auditoriumToCopy;
+	}
 	
 
 	public void onSeasonChange(){
@@ -249,7 +259,7 @@ public class CommissionEditBean implements Serializable{
 				if (g.getQuarter().equals(curentQ)){
 					graduation = g;
 					commission = graduation.getCommission();
-					HibernateUtil.lazyInitialize(commission , commission.getPersons());
+					HibernateUtil.lazyInitialize(commission, commission.getPersons());
 					HibernateUtil.lazyInitialize(graduation, graduation.getProtectionDays());
 //					loadSortedProtectionDays();
 					loadProtectionDayList();
@@ -271,6 +281,7 @@ public class CommissionEditBean implements Serializable{
 	private void loadProtectionDayList(){
 		protectionDayList.clear();
 		for (ProtectionDay protectionDay: graduation.getProtectionDays()){
+			protectionDay.setNumberOfStudents(getNumberOfStudentsFromDate(protectionDay));
 			protectionDayList.add(protectionDay);
 		}
 	}
@@ -421,10 +432,39 @@ public class CommissionEditBean implements Serializable{
 	
 	public void onProtectionDayStartTimeUpdate(ProtectionDay day){
 		chackStartAndEndTime(day, "Час початку захисту змінено.");
+		day.setNumberOfStudents(getNumberOfStudentsFromDate(day));
 	}
 
 	public void onProtectionDayEndTimeUpdate(ProtectionDay day){
 		chackStartAndEndTime(day, "Час кінця захисту змінено.");
+		day.setNumberOfStudents(getNumberOfStudentsFromDate(day));
+	}
+	
+	private Integer getNumberOfStudentsFromDate(ProtectionDay day){
+		if (day.getStartTime() != null && day.getEndTime() != null){
+			Calendar calendar = Calendar.getInstance();
+
+			calendar.setTime(day.getStartTime());
+			int startHour = calendar.get(Calendar.HOUR_OF_DAY);
+			int startMinute = calendar.get(Calendar.MINUTE);
+				
+			calendar.setTime(day.getEndTime());
+			int endHour = calendar.get(Calendar.HOUR_OF_DAY);
+			int endMinute = calendar.get(Calendar.MINUTE);
+
+			int totalStudents = (endHour - startHour) * 2;
+			if (startMinute != 0){
+				totalStudents--;
+			}
+			if (endMinute != 0){
+				totalStudents++;
+			}
+			
+			return totalStudents;
+		}
+		else{
+			return null;
+		}
 	}
 	
 	private void chackStartAndEndTime(ProtectionDay day, String successMessage){
@@ -505,16 +545,20 @@ public class CommissionEditBean implements Serializable{
 	
 	
 	public void onSheduleCellEdit(CellEditEvent event) {
-		
-		updateAllSheduleDays();
-		
-        Object oldValue = event.getOldValue();
-        Object newValue = event.getNewValue();
-         
-        if(newValue != null && !newValue.equals(oldValue)) {
+		Object oldValue = event.getOldValue();
+		Object newValue = event.getNewValue();
+
+		if (newValue != null && !newValue.equals(oldValue)) {
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Значення змінено. З " + oldValue + " у " + newValue, "Змінено");
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
+
+		updateAllSheduleDays();
+    }
+
+	public void onSheduleCellEdit(ProtectionDay day) {
+    	onStudenNumberChange(day);
+		updateAllSheduleDays();
     }
 	
 	private void updateAllSheduleDays(){
@@ -522,7 +566,44 @@ public class CommissionEditBean implements Serializable{
 			protectionDayDao.update(pd);
 		}
 	}
+	
+	public void copyAuditorium(){
+		if (auditoriumToCopy != null && !auditoriumToCopy.isEmpty()){
+			for (ProtectionDay pd: protectionDayList){
+				pd.setAuditorium(auditoriumToCopy);
+				protectionDayDao.update(pd);
+			}
+			
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Аудиторія для всіх днів змінена на " + auditoriumToCopy, "Змінено");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+		} else{
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Аудиторію не можливо змінити, стрічка пуста!", "Аудиторію не можливо змінити, стрічка пуста!");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+		
+	}
 
+	private void onStudenNumberChange(ProtectionDay day){
+		if (day.getStartTime() == null){
+			day.setNumberOfStudents(0);
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Час початку не встановлено!", "Час початку не встановлено!");
+	        FacesContext.getCurrentInstance().addMessage(null, msg);
+		} else if (day.getNumberOfStudents() <= 0){
+			day.setNumberOfStudents(0);
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Кількість студентів має бути більшою нуля!", "Кількість студентів має бути більшою нуля!");
+	        FacesContext.getCurrentInstance().addMessage(null, msg);
+		} else{
+			day.setEndTime(getEndDate(day));
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Новий час кінця та кількість студентів встановлено", "Змінено");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
+
+	private Date getEndDate(ProtectionDay day) {
+		long time = day.getStartTime().getTime();
+		return new Date(time + (day.getNumberOfStudents() * 30 * ONE_MINUTE_IN_MILLIS));
+	}
+	
 }
 
 
