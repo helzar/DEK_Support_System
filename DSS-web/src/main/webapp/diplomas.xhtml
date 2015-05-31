@@ -133,7 +133,7 @@
 			<h:form id="form4">
 				<p:growl id="msgs" showDetail="false" />
 
-				<p:panel id="students_panal" header="Список студентів та даних про дипломи" style="margin:20px;width:1500px;margin-left:12%" visible="#{diplomasEditBean.displayStudents}">
+				<p:panel id="students_panal" header="Список студентів та даних про дипломи" style="margin:20px;margin-left:6%;margin-right:6%" visible="#{diplomasEditBean.displayStudents}">
 
 					
 					<p:accordionPanel value="#{diplomasEditBean.groupObj.students.toArray()}" var="student" multiple="true" activeIndex="null" style="margin-top:15px;">						
@@ -288,7 +288,7 @@
 	
 
 			<h:form id="form5">
-				<p:panel id="add_student_panal" header="Додати студента" style="margin-bottom:10px;margin-top:10px;width:800px;margin-left:12%"
+				<p:panel id="add_student_panal" header="Додати студента" style="margin-bottom:10px;margin-top:10px;margin-left:6%;margin-right:6%"
 						 visible="#{diplomasEditBean.displayStudents}">
 			        <h:panelGrid id="add_student_panal_grid" cellpadding="5" columns="2" style="margin:10px">
 			        

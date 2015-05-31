@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -99,6 +100,21 @@ public class DiplomasEditBean implements Serializable{
 		
 		quarters = getQuartersMap(); 
 		years = getYearsMap(graduationDao.getYearsList());
+		
+		setCurrentYearAndQuarter();
+		onSeasonChange();
+	}
+	
+	private void setCurrentYearAndQuarter() {
+		LocalDate date = LocalDate.now();
+		year = date.getYear() + "";
+		
+		int month = date.getMonth().getValue();
+		if (month >= 8 || month <= 3){
+			quarter = QuarterEnum.winter.name();
+		} else{
+			quarter = QuarterEnum.summer.name();
+		}
 	}
 	
 	@PreDestroy

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -88,9 +89,25 @@ public class ReviewsEditBean implements Serializable{
 	public void init() {
 		displayGroups = false;
 		displayReviews = false;
+		groups = null;
 		
 		quarters = getQuartersMap(); 
 		years = getYearsMap(graduationDao.getYearsList());
+		
+		setCurrentYearAndQuarter();
+		onSeasonChange();
+	}
+	
+	private void setCurrentYearAndQuarter() {
+		LocalDate date = LocalDate.now();
+		year = date.getYear() + "";
+		
+		int month = date.getMonth().getValue();
+		if (month >= 8 || month <= 3){
+			quarter = QuarterEnum.winter.name();
+		} else{
+			quarter = QuarterEnum.summer.name();
+		}
 	}
 	
 	@PreDestroy
@@ -421,6 +438,7 @@ public class ReviewsEditBean implements Serializable{
 		}
 		else{
 			displayGroups = false;
+			groups = null;
 		}
 		groupName = "";
 		displayReviews = false;

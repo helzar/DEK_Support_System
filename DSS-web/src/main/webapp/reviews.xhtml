@@ -46,8 +46,8 @@
 				</p:dialog>
 				
 			 
-				<h:panelGrid id="years_grid" cellpadding="5" columns="2" style="margin-left:18%;">
-				    <p:panel header="Виберіть захист" style="margin-bottom:5px;margin-top:5px;height:160px;width:600px">
+				<h:panelGrid id="years_grid" cellpadding="5" columns="2" style="margin-left:18%;margin-right:18%;width:64%">
+				    <p:panel header="Виберіть захист" style="margin-bottom:5px;margin-top:5px;margin-right:1%;height:160px;width:99%">
 				        <h:panelGrid columns="2" cellpadding="5">
 				            <p:outputLabel for="year" value="Рік: " />
 				            <p:selectOneMenu id="year" value="#{reviewsEditBean.year}" style="width:150px">
@@ -67,7 +67,7 @@
 				    </p:panel>
 	
 
-					<p:panel id="groups_panal" header="Виберіть групу" style="margin-bottom:5px;margin-top:5px;height:160px;width:600px" visible="#{reviewsEditBean.displayGroups}">
+					<p:panel id="groups_panal" header="Виберіть групу" style="margin-bottom:5px;margin-top:5px;height:160px;width:100%">
 				        
 				        <h:panelGrid columns="2" cellpadding="5">
 					        <p:outputLabel for="group" value="Група: " />
@@ -87,7 +87,7 @@
 				
 			<h:form id="form2">
 
-				<p:panel id="reviews_panal" header="Рецензії" style="margin:20px;width:1500px;margin-left:12%" visible="#{reviewsEditBean.displayReviews}">
+				<p:panel id="reviews_panal" header="Рецензії" style="margin:20px;margin-left:6%;margin-right:6%" visible="#{reviewsEditBean.displayReviews}">
 						<h:panelGrid id="years_grid" cellpadding="5" columns="3">
 							<p:outputLabel value="Рецензент: " />
 				            <p:selectOneMenu value="#{reviewsEditBean.reviewerId}">
@@ -164,7 +164,7 @@
 	
 
 			<h:form id="form3">
-				<p:panel id="add_review_panal" header="Додати рецензію" style="margin-bottom:10px;margin-top:10px;width:800px;margin-left:12%"
+				<p:panel id="add_review_panal" header="Додати рецензію" style="margin-bottom:10px;margin-top:10px;margin-left:6%;margin-right:6%"
 						 visible="#{reviewsEditBean.displayAddReview}">
 
 					<h:panelGrid id="years_grid" cellpadding="5" columns="2">

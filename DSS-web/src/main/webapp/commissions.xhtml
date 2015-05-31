@@ -42,7 +42,7 @@
 				    <p:graphicImage name="/static/images/ajax_loading_bar.gif" />
 				</p:dialog>
 	
-				<p:panel header="Виберіть захист" style="margin-bottom:5px;margin-left:30%;margin-top:5px;height:160px;width:40%">
+				<p:panel header="Виберіть захист" style="margin-bottom:5px;margin-left:30%;margin-right:30%;margin-top:5px;height:160px;width:40%">
 			        <h:panelGrid columns="2" cellpadding="5">
 			            <p:outputLabel for="year" value="Рік: " />
 			            <p:selectOneMenu id="year" value="#{commissionEditBean.year}" style="width:150px">
@@ -66,7 +66,7 @@
 			
 			<h:form id="form2">
 
-				<p:panel id="commission_panal" header="Комісія" style="margin:20px;width:1500px;margin-left:12%" visible="#{commissionEditBean.displayCommissions}">
+				<p:panel id="commission_panal" header="Комісія" style="margin:20px;margin-left:6%;margin-right:6%" visible="#{commissionEditBean.displayCommissions}">
 				
 					<h:panelGrid cellpadding="5" columns="3">
 						<p:outputLabel
@@ -136,7 +136,7 @@
 			
 			<h:form id="form3">
 
-				<p:panel id="timetable_panal" header="Розклад засідань" style="margin:20px;width:1500px;margin-left:12%" visible="#{commissionEditBean.displayCommissions}">
+				<p:panel id="timetable_panal" header="Розклад засідань" style="margin:20px;margin-left:6%;margin-right:6%" visible="#{commissionEditBean.displayCommissions}">
 
 
 							<p:dataTable var="pDay" value="#{commissionEditBean.protectionDayList}" id="daysTable"

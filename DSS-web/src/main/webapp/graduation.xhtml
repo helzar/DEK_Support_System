@@ -47,7 +47,7 @@
 			
 			<h:form id="form2">
 
-				<p:accordionPanel id="day_commision_info_panal"  style="margin:20px;width:1500px;margin-left:12%"
+				<p:accordionPanel id="day_commision_info_panal"  style="margin:20px;margin-left:6%;margin-right:6%"
 					rendered="#{graduationEditBean.displayAllGraduationDay}">
 					
 					<p:tab title="Комісія">				
@@ -76,7 +76,7 @@
 					</p:tab>
 				</p:accordionPanel>
 
-				<p:panel id="day_stids_info_panal" header="Студенти, що захищаються" style="margin:20px;width:1500px;margin-left:12%" visible="#{graduationEditBean.displayAllGraduationDay}">
+				<p:panel id="day_stids_info_panal" header="Студенти, що захищаються" style="margin:20px;margin-left:6%;margin-right:6%" visible="#{graduationEditBean.displayAllGraduationDay}">
 				
 					<p:dataTable var="diploma" value="#{graduationEditBean.protectionDay.diplomas}"
 						resizableColumns="true">

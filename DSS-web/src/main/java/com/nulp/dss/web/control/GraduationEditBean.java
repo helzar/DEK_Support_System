@@ -1,6 +1,9 @@
 package com.nulp.dss.web.control;
 
 import java.io.Serializable;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,13 +64,27 @@ public class GraduationEditBean implements Serializable{
 	
 	@PostConstruct
 	public void init() {
-		displayDaysList = false;
 		displayAllGraduationDay = false;
 
 		quarters = getQuartersMap(); 
 		years = getYearsMap(graduationDao.getYearsList());
+
+		setCurrentYearAndQuarter();
+		onSeasonChange();
 	}
 	
+	private void setCurrentYearAndQuarter() {
+		LocalDate date = LocalDate.now();
+		year = date.getYear() + "";
+		
+		int month = date.getMonth().getValue();
+		if (month >= 8 || month <= 3){
+			quarter = QuarterEnum.winter.name();
+		} else{
+			quarter = QuarterEnum.summer.name();
+		}
+	}
+
 	private Map<String, String> getYearsMap(List<Integer> yearsList) {
 		Map<String, String> map = new HashMap<String, String>();
 		
