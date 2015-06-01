@@ -39,6 +39,10 @@
 				            </p:selectOneMenu>
 				            
 				        </h:panelGrid>
+				        <h:panelGrid columns="1" cellpadding="5">
+					        <p:outputLabel value="#{graduationEditBean.graduationStatistic}" />
+					        <p:outputLabel value="#{graduationEditBean.scheduleStatistic}" />
+					    </h:panelGrid>
 				        
 				    </p:panel>
 
@@ -102,7 +106,7 @@
 		                    <p:commandButton icon="ui-icon-trash"
 		                        title="Видалити запис"
 		                        actionListener="#{graduationEditBean.deleteDiploma(diploma)}"
-		                        update=":form2"
+		                        update=":form1,:form2"
 		                        ajax="false" />
 	                	</p:column>
 						
@@ -110,10 +114,9 @@
 					
 					<h:panelGrid cellpadding="5" columns="3" rendered="#{graduationEditBean.numberOfCurrentlySelectedDiplomas lt graduationEditBean.numberOfMaxPossibleDiploms}">
 						<p:outputLabel value="Додати студента: "/>
-						<p:selectOneMenu value="#{graduationEditBean.freeDiplomaId}" style="width:150px">
-			                <f:selectItems value="#{graduationEditBean.freeDiplomaIds}" />
-			            </p:selectOneMenu>
-			            <p:commandButton value="Додати" actionListener="#{graduationEditBean.addDiploma()}" icon="ui-icon-check" update=":form2"/>
+						<p:autoComplete id="studs_autho_complite" value="#{graduationEditBean.student}" completeMethod="#{graduationEditBean.completeStudents}"
+                        	var="student" itemLabel="#{student.displayFullName()}" itemValue="#{student}" converter="myStudentsConverterForGrad" forceSelection="true" />
+			            <p:commandButton value="Додати" actionListener="#{graduationEditBean.addDiploma()}" icon="ui-icon-check" update=":form1,:form2"/>
 					</h:panelGrid>
 					<p:outputLabel value="Обрано студентів: #{graduationEditBean.numberOfCurrentlySelectedDiplomas} з #{graduationEditBean.numberOfMaxPossibleDiploms}"/>
 

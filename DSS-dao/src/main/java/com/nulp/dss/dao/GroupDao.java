@@ -7,6 +7,7 @@ import org.hibernate.Session;
 
 import com.nulp.dss.model.Group;
 import com.nulp.dss.model.Student;
+import com.nulp.dss.util.HibernateUtil;
 
 public class GroupDao extends BaseDaoImpl<Group> {
 
@@ -100,6 +101,25 @@ public class GroupDao extends BaseDaoImpl<Group> {
 
 		closeSession(session);
 		return count.longValue();
+	}
+
+	public Long countAllReviewdGroupStudents(Integer groupId) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		
+		Query query = session.createQuery(
+				"SELECT count(*) "
+				+ "FROM Group as G, Student as St "
+				+ "WHERE G.id = :group_id "
+				+ "AND St member of G.students "
+				+ "AND St.diploma.review.reviewer is not null"
+				);
+		query.setParameter("group_id", groupId);
+		Long count = (Long)query.uniqueResult();
+
+		session.getTransaction().commit();
+		
+		return count;
 	}
 
 }

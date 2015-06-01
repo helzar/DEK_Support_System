@@ -128,6 +128,10 @@ public class Student implements Serializable {
 	public void setDiploma(Diploma diploma) {
 		this.diploma = diploma;
 	}
+	
+	public String displayFullName(){
+		return lName + " " + fName + " " + mName;
+	}
 
 	@Override
 	public int hashCode() {

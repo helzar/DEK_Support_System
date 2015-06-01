@@ -76,7 +76,7 @@ public class GraduationDao extends BaseDaoImpl<Graduation> {
 		list = query.list();
 		
 		closeSession(session);
-		return list; 
+		return list;
 	}
 
 	public void insertObj(Object object) {
@@ -171,5 +171,64 @@ public class GraduationDao extends BaseDaoImpl<Graduation> {
 		
 		session.getTransaction().commit();
 	}
-	
+
+	public Long countAllGraduationStudents(Integer graduationId) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		
+		Query query = session.createQuery(
+				"SELECT count(*) "
+				+ "FROM Graduation as Grad, Group as Grp, Student as St "
+				+ "WHERE Grad.id = :graduation_id "
+				+ "AND St member of Grp.students "
+				+ "AND Grp member of Grad.groups "
+				);
+		query.setParameter("graduation_id", graduationId);
+		Long count = (Long)query.uniqueResult();
+
+		session.getTransaction().commit();
+		
+		return count;
+	}
+
+	public Long countAllReviewdGraduationStudents(Integer graduationId) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		
+		Query query = session.createQuery(
+				"SELECT count(*) "
+				+ "FROM Graduation as Grad, Group as Grp, Student as St "
+				+ "WHERE Grad.id = :graduation_id "
+				+ "AND St member of Grp.students "
+				+ "AND Grp member of Grad.groups "
+				+ "AND St.diploma.review.reviewer is not null"
+				);
+		query.setParameter("graduation_id", graduationId);
+		Long count = (Long)query.uniqueResult();
+
+		session.getTransaction().commit();
+		
+		return count;
+	}
+
+	public Long countAllGraduationStudentsWhatHaweDay(Integer graduationId) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		
+		Query query = session.createQuery(
+				"SELECT count(*) "
+				+ "FROM Graduation as Grad, Group as Grp, Student as St "
+				+ "WHERE Grad.id = :graduation_id "
+				+ "AND St member of Grp.students "
+				+ "AND Grp member of Grad.groups "
+				+ "AND St.diploma.protectionDay is not null"
+				);
+		query.setParameter("graduation_id", graduationId);
+		Long count = (Long)query.uniqueResult();
+
+		session.getTransaction().commit();
+		
+		return count;
+	}
+
 }

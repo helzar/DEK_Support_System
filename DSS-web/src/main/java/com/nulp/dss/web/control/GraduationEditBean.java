@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import com.nulp.dss.dao.DiplomaDao;
 import com.nulp.dss.dao.GraduationDao;
@@ -23,6 +25,7 @@ import com.nulp.dss.model.Diploma;
 import com.nulp.dss.model.Graduation;
 import com.nulp.dss.model.PresentInProtectionDay;
 import com.nulp.dss.model.ProtectionDay;
+import com.nulp.dss.model.Student;
 import com.nulp.dss.model.enums.QuarterEnum;
 
 @ManagedBean
@@ -37,6 +40,13 @@ public class GraduationEditBean implements Serializable{
 	private PresentInProtectionDayDao presentInProtectionDayDao = new PresentInProtectionDayDao();
 	private DiplomaDao diplomaDao = new DiplomaDao();
 
+	private String graduationStatistic;
+	private Long graduationTotalStudents;
+	private Long graduationOccupiedPlasseStudents;
+	private String scheduleStatistic;
+	private Long scheduleTotalPlasses;
+	private Long scheduleOccupiedPlasses;
+	
 	private String year;
 	private String quarter;
 	private Map<String, String> years;
@@ -53,10 +63,12 @@ public class GraduationEditBean implements Serializable{
 	private Map<String, ProtectionDay> protectionDays;
 	private Map<String, String> protectionDayIds;
 	
-	private Diploma freeDiploma;
-	private String freeDiplomaId;
+//	private Diploma freeDiploma;
+//	private String freeDiplomaId;
 	private Map<String, Diploma> freeDiplomas;
 	private Map<String, String> freeDiplomaIds;
+	private Student student;
+	private List<Student> students;
 	
 	private Integer numberOfCurrentlySelectedDiplomas;
 	private Integer numberOfMaxPossibleDiploms;
@@ -203,21 +215,21 @@ public class GraduationEditBean implements Serializable{
 		this.protectionDayIds = protectionDayIds;
 	}
 
-	public Diploma getFreeDiploma() {
-		return freeDiploma;
-	}
-
-	public void setFreeDiploma(Diploma freeDiploma) {
-		this.freeDiploma = freeDiploma;
-	}
-
-	public String getFreeDiplomaId() {
-		return freeDiplomaId;
-	}
-
-	public void setFreeDiplomaId(String freeDiplomaId) {
-		this.freeDiplomaId = freeDiplomaId;
-	}
+//	public Diploma getFreeDiploma() {
+//		return freeDiploma;
+//	}
+//
+//	public void setFreeDiploma(Diploma freeDiploma) {
+//		this.freeDiploma = freeDiploma;
+//	}
+//
+//	public String getFreeDiplomaId() {
+//		return freeDiplomaId;
+//	}
+//
+//	public void setFreeDiplomaId(String freeDiplomaId) {
+//		this.freeDiplomaId = freeDiplomaId;
+//	}
 
 	public Map<String, Diploma> getFreeDiplomas() {
 		return freeDiplomas;
@@ -251,7 +263,30 @@ public class GraduationEditBean implements Serializable{
 	public void setNumberOfMaxPossibleDiploms(Integer numberOfMaxPossibleDiploms) {
 		this.numberOfMaxPossibleDiploms = numberOfMaxPossibleDiploms;
 	}
-	
+
+	public Student getStudent() {
+		return student;
+	}
+
+	public void setStudent(Student student) {
+		this.student = student;
+	}
+
+	public String getGraduationStatistic() {
+		return graduationStatistic;
+	}
+
+	public void setGraduationStatistic(String graduationStatistic) {
+		this.graduationStatistic = graduationStatistic;
+	}
+
+	public String getScheduleStatistic() {
+		return scheduleStatistic;
+	}
+
+	public void setScheduleStatistic(String scheduleStatistic) {
+		this.scheduleStatistic = scheduleStatistic;
+	}
 
 	public void onYearChange() {
 		quarter = "";
@@ -275,6 +310,12 @@ public class GraduationEditBean implements Serializable{
 					break;
 				}
 			}
+
+			graduationTotalStudents = graduationDao.countAllGraduationStudents(graduation.getId());
+			graduationOccupiedPlasseStudents = graduationDao.countAllGraduationStudentsWhatHaweDay(graduation.getId());
+			scheduleTotalPlasses = calcScheduleTotalPlasses();
+			scheduleOccupiedPlasses = graduationOccupiedPlasseStudents;
+			countStatistic();
 			
 			displayDaysList = true;
 		}
@@ -285,6 +326,14 @@ public class GraduationEditBean implements Serializable{
 		displayAllGraduationDay = false;
 	}
 	
+	private Long calcScheduleTotalPlasses() {
+		long counter = 0;
+		for (ProtectionDay pd: graduation.getProtectionDays()){
+			counter += getNumbOfMaxDiplomas(pd);
+		}
+		return counter;
+	}
+
 	private void loadProtectionDayList(){
 		String nullString = "-";
 		protectionDays = new HashMap<String, ProtectionDay>();
@@ -326,6 +375,11 @@ public class GraduationEditBean implements Serializable{
 		return (int)(time/(1000 * 60 * 30));
 	}
 	
+	private int getNumbOfMaxDiplomas(ProtectionDay localProtectionDay){
+		long time = localProtectionDay.getEndTime().getTime() - localProtectionDay.getStartTime().getTime();
+		return (int)(time/(1000 * 60 * 30));
+	}
+	
 	public void onPresentPersonEdit(PresentInProtectionDay presentInProtectionDay){
 		presentInProtectionDayDao.update(presentInProtectionDay);
 		
@@ -337,6 +391,7 @@ public class GraduationEditBean implements Serializable{
 		String nullString = "-";
 		freeDiplomas = new HashMap<String, Diploma>();
 		freeDiplomaIds = new TreeMap<String, String>(new EnumManagerBean.EnumStringComparator(nullString, false));
+		students = new ArrayList<Student>();
 		
 		freeDiplomas.put(nullString, null);
 		freeDiplomaIds.put(nullString, nullString);
@@ -344,7 +399,18 @@ public class GraduationEditBean implements Serializable{
 		for (Diploma diploma: diplomaDao.getAllFreeByGraduationId(graduation.getId(), protectionDay)){
 			freeDiplomas.put(diploma.getId().toString(), diploma);
 			freeDiplomaIds.put(diploma.getStudent().getlName() + " " + diploma.getStudent().getfName() + " " + diploma.getStudent().getmName(), diploma.getId().toString());
+			students.add(diploma.getStudent());
 		}
+		
+		setSessionAttributes();
+	}
+	
+	private void setSessionAttributes() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+    	HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+  
+    	session.setAttribute("freeDiplomas", freeDiplomas);
+    	session.setAttribute("freeDiplomaIds", freeDiplomaIds);
 	}
 	
 	public void deleteDiploma(Diploma diploma){
@@ -353,21 +419,55 @@ public class GraduationEditBean implements Serializable{
 			
 			freeDiplomas.put(diploma.getId().toString(), diploma);
 			freeDiplomaIds.put(diploma.getStudent().getlName() + " " + diploma.getStudent().getfName() + " " + diploma.getStudent().getmName(), diploma.getId().toString());
+			students.add(diploma.getStudent());
 			numberOfCurrentlySelectedDiplomas--;
+			
+			graduationOccupiedPlasseStudents--;
+			scheduleOccupiedPlasses = graduationOccupiedPlasseStudents;
+			countStatistic();
+			
+			setSessionAttributes();
 		}
 	}
 	
 	public String addDiploma(){
 		
-		freeDiploma = freeDiplomas.get(freeDiplomaId);
-		if ((numberOfCurrentlySelectedDiplomas < numberOfMaxPossibleDiploms) && freeDiploma != null){
-			graduationDao.addDiplomaToProtectionDay(freeDiploma, protectionDay);
+		if ((numberOfCurrentlySelectedDiplomas < numberOfMaxPossibleDiploms) && student != null){
+			Diploma diploma = student.getDiploma();
+			graduationDao.addDiplomaToProtectionDay(diploma, protectionDay);
 			
-			freeDiplomas.remove(freeDiploma.getId().toString());
-			freeDiplomaIds.remove(freeDiploma.getStudent().getlName() + " " + freeDiploma.getStudent().getfName() + " " + freeDiploma.getStudent().getmName());
+			freeDiplomas.remove(diploma.getId().toString());
+			freeDiplomaIds.remove(diploma.getStudent().getlName() + " " + diploma.getStudent().getfName() + " " + diploma.getStudent().getmName());
+			students.remove(student);
+			student = null;
 			numberOfCurrentlySelectedDiplomas++;
+			
+			graduationOccupiedPlasseStudents++;
+			scheduleOccupiedPlasses = graduationOccupiedPlasseStudents;
+			countStatistic();
+			
+			setSessionAttributes();
 		}
 		return null;
+	}
+	
+	public List<Student> completeStudents(String query) {
+        List<Student> filteredStudents = new ArrayList<Student>();
+        query = query.toLowerCase();
+        
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            if(student.displayFullName().toLowerCase().startsWith(query)) {
+            	filteredStudents.add(student);
+            }
+        }
+         
+        return filteredStudents;
+    }
+	
+	private void countStatistic() {
+		graduationStatistic = "Студентам призначено день захисту - " + graduationOccupiedPlasseStudents + " з " + graduationTotalStudents;
+		scheduleStatistic = "Занято днів захисту - " + scheduleOccupiedPlasses + " з " + scheduleTotalPlasses;
 	}
 	
 }

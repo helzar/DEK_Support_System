@@ -1,12 +1,10 @@
 package com.nulp.dss.web.control;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,11 +21,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.nulp.dss.dao.GraduationDao;
+import com.nulp.dss.dao.GroupDao;
 import com.nulp.dss.dao.ReviewDao;
 import com.nulp.dss.dao.ReviewerDao;
 import com.nulp.dss.docxmanaging.management.PaymentFormManager;
@@ -53,6 +53,13 @@ public class ReviewsEditBean implements Serializable{
 	private GraduationDao graduationDao = new GraduationDao();
 	private ReviewerDao reviewerDao = new ReviewerDao();
 	private ReviewDao reviewDao = new ReviewDao();
+	private GroupDao groupDao = new GroupDao();
+	
+	private String graduationStatistic;
+	private Long graduationTotalStudents;
+	private Long graduationRevievedStudents;
+	private String groupStatistic;
+	private Long groupRevievedStudents;
 	
 	private String year;
 	private String quarter;
@@ -63,10 +70,12 @@ public class ReviewsEditBean implements Serializable{
 	private Set<Review> reviews;
 	private List<Review> reviewsList;
 
-	private Student freeStudentForNewReview;
-	private String freeStudentForNewReviewId;
+//	private Student freeStudentForNewReview;
+//	private String freeStudentForNewReviewId;
 	private Map<String, Student> freeStudentsForNewReviews;
 	private Map<String, String> freeStudentsForNewReviewsWithId;
+	private List<Student> students;
+	private Student student;
 	
 	private Reviewer reviewer;
 	private String reviewerId;
@@ -262,14 +271,6 @@ public class ReviewsEditBean implements Serializable{
 		this.reviews = reviews;
 	}
 
-	public Student getFreeStudentForNewReview() {
-		return freeStudentForNewReview;
-	}
-
-	public void setFreeStudentForNewReview(Student freeStudentForNewReview) {
-		this.freeStudentForNewReview = freeStudentForNewReview;
-	}
-
 	public Map<String, Student> getFreeStudentsForNewReviews() {
 		return freeStudentsForNewReviews;
 	}
@@ -295,14 +296,6 @@ public class ReviewsEditBean implements Serializable{
 		this.reviewersWithId = reviewersWithId;
 	}
 
-	public String getFreeStudentForNewReviewId() {
-		return freeStudentForNewReviewId;
-	}
-
-	public void setFreeStudentForNewReviewId(String freeStudentForNewReviewId) {
-		this.freeStudentForNewReviewId = freeStudentForNewReviewId;
-	}
-
 	public Map<String, String> getFreeStudentsForNewReviewsWithId() {
 		return freeStudentsForNewReviewsWithId;
 	}
@@ -322,6 +315,38 @@ public class ReviewsEditBean implements Serializable{
 
 	public StreamedContent getPaymentFormFile() {
 		return paymentFormFile;
+	}
+	
+	public List<Student> getStudents() {
+		return students;
+	}
+
+	public void setStudents(List<Student> students) {
+		this.students = students;
+	}
+
+	public Student getStudent() {
+		return student;
+	}
+
+	public void setStudent(Student student) {
+		this.student = student;
+	}
+
+	public String getGraduationStatistic() {
+		return graduationStatistic;
+	}
+
+	public void setGraduationStatistic(String graduationStatistic) {
+		this.graduationStatistic = graduationStatistic;
+	}
+
+	public String getGroupStatistic() {
+		return groupStatistic;
+	}
+
+	public void setGroupStatistic(String groupStatistic) {
+		this.groupStatistic = groupStatistic;
 	}
 	
 
@@ -395,6 +420,7 @@ public class ReviewsEditBean implements Serializable{
 	private void initFreeStudentsForNewReviewsByGroup(){
 		freeStudentsForNewReviews = new HashMap<String, Student>();
 		freeStudentsForNewReviewsWithId = new HashMap<String, String>();
+		students = new ArrayList<Student>();
 		
 		Reviewer localReviewer;
 		for (Student student: groupObj.getStudents()){
@@ -402,10 +428,21 @@ public class ReviewsEditBean implements Serializable{
 			if (localReviewer == null){
 				freeStudentsForNewReviewsWithId.put(student.getlName() + " " + student.getfName() + " " + student.getmName(), student.getId().toString());
 				freeStudentsForNewReviews.put(student.getId().toString(), student);
+				students.add(student);
 			}
 		}
+		
+		setSessionAttributes();
 	}
 	
+	private void setSessionAttributes() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+    	HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+  
+    	session.setAttribute("freeStudentsForNewReviews", freeStudentsForNewReviews);
+    	session.setAttribute("freeStudentsForNewReviewsWithId", freeStudentsForNewReviewsWithId);
+	}
+
 	private Set<Review> getReviewsByReviewer(){
 		Set<Review> set = new HashSet<Review>();
 		
@@ -433,10 +470,15 @@ public class ReviewsEditBean implements Serializable{
 				}
 			}
 			
+			graduationTotalStudents = graduationDao.countAllGraduationStudents(graduation.getId());
+			graduationRevievedStudents = graduationDao.countAllReviewdGraduationStudents(graduation.getId());
+			countGraduationStatistic();
+			
 			displayGroups = true;
 			loadGroups();
 		}
 		else{
+			graduationStatistic = null;
 			displayGroups = false;
 			groups = null;
 		}
@@ -446,6 +488,10 @@ public class ReviewsEditBean implements Serializable{
 		displayReviewsList = false;
 	}
 	
+	private void countGraduationStatistic() {
+		graduationStatistic = "Рецензовано студентів - " + graduationRevievedStudents + " з " + graduationTotalStudents;
+	}
+
 	private void loadGroups(){
 		Map<String, String> map = new HashMap<String, String>();
 		
@@ -468,6 +514,9 @@ public class ReviewsEditBean implements Serializable{
 		HibernateUtil.lazyInitialize(groupObj, groupObj.getStudents());
 
 		setReviewersMaps();
+		
+		groupRevievedStudents = groupDao.countAllReviewdGroupStudents(groupObj.getId());
+		countGroupStatistic();
 
 		if (reviewer != null){
 			onReviewerChange();
@@ -480,6 +529,10 @@ public class ReviewsEditBean implements Serializable{
 		}
 		
 		displayReviews = true;
+	}
+	
+	private void countGroupStatistic() {
+		groupStatistic = "Рецензовано студентів у групі - " + groupRevievedStudents + " з " + groupObj.getStudents().size();
 	}
 	
 	private void setReviewersMaps(){
@@ -518,17 +571,29 @@ public class ReviewsEditBean implements Serializable{
 		Student student = review.getDiploma().getStudent();
 		freeStudentsForNewReviews.put(student.getId().toString(), student);
 		freeStudentsForNewReviewsWithId.put(student.getlName() + " " + student.getfName() + " " + student.getmName(), student.getId().toString());
+		students.add(student);
+		
+		graduationRevievedStudents--;
+		countGraduationStatistic();
+		
+		groupRevievedStudents--;
+		countGroupStatistic();
 		
 		FacesMessage msg = new FacesMessage("Рецензію видалено.");
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+		
+		setSessionAttributes();
 	}
 	
 	public String addNewReview(){
 		
-		freeStudentForNewReview = freeStudentsForNewReviews.get(freeStudentForNewReviewId);
+//		freeStudentForNewReview = freeStudentsForNewReviews.get(freeStudentForNewReviewId);
 		
-		if (freeStudentForNewReview != null){
-			Review review = freeStudentForNewReview.getDiploma().getReview();
+//		if (freeStudentForNewReview != null){
+//			Review review = freeStudentForNewReview.getDiploma().getReview();
+		
+		if (student != null){
+			Review review = student.getDiploma().getReview();
 			
 			review.setReviewer(reviewer);
 
@@ -538,12 +603,26 @@ public class ReviewsEditBean implements Serializable{
 			reviewsList = new ArrayList<Review>(reviews);
 			
 			Student student = review.getDiploma().getStudent();
-			freeStudentsForNewReviews.remove(freeStudentForNewReviewId);
+//			freeStudentsForNewReviews.remove(freeStudentForNewReviewId);
+			freeStudentsForNewReviews.remove(student.getId() + "");
 			freeStudentsForNewReviewsWithId.remove(student.getlName() + " " + student.getfName() + " " + student.getmName());
+			students.remove(student);
+			student = null;
+			
+			setSessionAttributes();
+			
+			graduationRevievedStudents++;
+			countGraduationStatistic();
+			
+			groupRevievedStudents++;
+			countGroupStatistic();
+			
+			FacesMessage msg = new FacesMessage("Рецензію додано.");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		} else{
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Невірне імя студента!", "Невірне імя студента!");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
-		
-		FacesMessage msg = new FacesMessage("Рецензію додано.");
-		FacesContext.getCurrentInstance().addMessage(null, msg);
 		
 		return null;
 	}
@@ -681,5 +760,19 @@ public class ReviewsEditBean implements Serializable{
 		
 		return true;
 	}
+	
+	public List<Student> completeStudents(String query) {
+        List<Student> filteredStudents = new ArrayList<Student>();
+        query = query.toLowerCase();
+        
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            if(student.displayFullName().toLowerCase().startsWith(query)) {
+            	filteredStudents.add(student);
+            }
+        }
+         
+        return filteredStudents;
+    }
 	
 }
