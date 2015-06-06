@@ -1,25 +1,33 @@
 package com.nulp.dss.web.control;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Serializable;
-import java.time.Clock;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+
 import com.nulp.dss.dao.DiplomaDao;
 import com.nulp.dss.dao.GraduationDao;
 import com.nulp.dss.dao.PresentInProtectionDayDao;
+import com.nulp.dss.docxmanaging.management.StudentsScheduleFormManager;
 import com.nulp.dss.model.Commission;
 import com.nulp.dss.model.Diploma;
 import com.nulp.dss.model.Graduation;
@@ -27,6 +35,7 @@ import com.nulp.dss.model.PresentInProtectionDay;
 import com.nulp.dss.model.ProtectionDay;
 import com.nulp.dss.model.Student;
 import com.nulp.dss.model.enums.QuarterEnum;
+import com.nulp.dss.util.Transliterator;
 
 @ManagedBean
 @ViewScoped
@@ -73,6 +82,8 @@ public class GraduationEditBean implements Serializable{
 	private Integer numberOfCurrentlySelectedDiplomas;
 	private Integer numberOfMaxPossibleDiploms;
 	
+	private StreamedContent studentsScheduleFile;
+	private BufferedInputStream studentsScheduleFileStream;
 	
 	@PostConstruct
 	public void init() {
@@ -94,6 +105,17 @@ public class GraduationEditBean implements Serializable{
 			quarter = QuarterEnum.winter.name();
 		} else{
 			quarter = QuarterEnum.summer.name();
+		}
+	}
+	
+	@PreDestroy
+	public void destroy() {  
+		if (studentsScheduleFileStream != null){
+			try {
+				studentsScheduleFileStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -288,6 +310,10 @@ public class GraduationEditBean implements Serializable{
 		this.scheduleStatistic = scheduleStatistic;
 	}
 
+	public StreamedContent getStudentsScheduleFile() {
+		return studentsScheduleFile;
+	}
+
 	public void onYearChange() {
 		quarter = "";
 		displayDaysList = false;
@@ -307,6 +333,7 @@ public class GraduationEditBean implements Serializable{
 					graduationDao.loadGraduationAndCommissionAndProtectionDays(graduation);
 					
 					loadProtectionDayList();
+					initFreeDiplomas();
 					break;
 				}
 			}
@@ -329,7 +356,9 @@ public class GraduationEditBean implements Serializable{
 	private Long calcScheduleTotalPlasses() {
 		long counter = 0;
 		for (ProtectionDay pd: graduation.getProtectionDays()){
-			counter += getNumbOfMaxDiplomas(pd);
+			if (pd.getStartTime() != null && pd.getEndTime() != null){
+				counter += getNumbOfMaxDiplomas(pd);
+			}
 		}
 		return counter;
 	}
@@ -396,7 +425,7 @@ public class GraduationEditBean implements Serializable{
 		freeDiplomas.put(nullString, null);
 		freeDiplomaIds.put(nullString, nullString);
 		
-		for (Diploma diploma: diplomaDao.getAllFreeByGraduationId(graduation.getId(), protectionDay)){
+		for (Diploma diploma: diplomaDao.getAllFreeByGraduationId(graduation, protectionDays.values())){
 			freeDiplomas.put(diploma.getId().toString(), diploma);
 			freeDiplomaIds.put(diploma.getStudent().getlName() + " " + diploma.getStudent().getfName() + " " + diploma.getStudent().getmName(), diploma.getId().toString());
 			students.add(diploma.getStudent());
@@ -468,6 +497,70 @@ public class GraduationEditBean implements Serializable{
 	private void countStatistic() {
 		graduationStatistic = "Студентам призначено день захисту - " + graduationOccupiedPlasseStudents + " з " + graduationTotalStudents;
 		scheduleStatistic = "Занято днів захисту - " + scheduleOccupiedPlasses + " з " + scheduleTotalPlasses;
+	}
+
+	public void authoGenerateStudentsScedule(){
+		Student student;
+		while (graduationOccupiedPlasseStudents < graduationTotalStudents && scheduleOccupiedPlasses < scheduleTotalPlasses){
+
+			for (ProtectionDay pd: protectionDays.values()){
+				if (pd.getDiplomas().size() < getNumbOfMaxDiplomas(pd)){
+					student = students.get(students.size() - 1);
+					students.remove(students.size() - 1);
+					freeDiplomas.remove(student.getDiploma().getId() + "");
+					freeDiplomaIds.remove(student.displayFullName());
+					
+					pd.getDiplomas().add(student.getDiploma());
+					student.getDiploma().setProtectionDay(pd);
+					break;
+				}
+			}
+			
+			graduationOccupiedPlasseStudents++;
+			scheduleOccupiedPlasses++;
+		}
+		
+		graduationDao.update(graduation);
+		countStatistic();
+		FacesMessage msg = new FacesMessage("Студентів розподілено!");
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+	
+	public void downloadStudentsScheduleFile(){
+		if (graduation != null){
+			try {
+				if (studentsScheduleFileStream != null){
+					studentsScheduleFileStream.close();
+					studentsScheduleFileStream = null;
+				}
+				String filePath = new StudentsScheduleFormManager().generateDocuments(graduation.getId());
+				if (filePath == null || !new File(filePath).exists()){
+					String message = "Не вдалося сформувати документ!";
+					FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, message);
+					FacesContext.getCurrentInstance().addMessage(null, msg);
+					return;
+				}
+				
+				studentsScheduleFileStream = new BufferedInputStream(new FileInputStream(filePath));
+				studentsScheduleFile = new DefaultStreamedContent(studentsScheduleFileStream, "docx", getStudentSchedulemReadableFileName());
+			} catch (Exception e) {
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Не вдалося сформувати документ!", "Не вдалося сформувати документ!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				e.printStackTrace();
+			}
+		}
+		else{
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Рік та сезон захисту обрано!", "Рік та сезон захисту обрано!");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
+	
+	private String getStudentSchedulemReadableFileName(){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(graduation.getYear());
+		
+		String fileName = "Розклад для студентів за " + graduation.getQuarter() + " " + calendar.get(Calendar.YEAR) + ".docx";
+		return Transliterator.transliterate(fileName);
 	}
 	
 }

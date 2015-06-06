@@ -5,7 +5,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.nulp.dss.model.Diploma;
 import com.nulp.dss.model.Graduation;
 import com.nulp.dss.model.ProtectionDay;
 
@@ -65,6 +64,28 @@ public class ProtectionDayDao extends BaseDaoImpl<ProtectionDay> {
 		
 		closeSession(session);
 		return list;
+	}
+
+	public ProtectionDay getDayByDiplomaId(Integer studentId) {
+		Session session = this.getSession();
+
+		Query query = session.createQuery(
+				"SELECT Day "
+				+ "FROM ProtectionDay as Day, Diploma as Dp "
+				+ "WHERE Dp.id = :student_id "
+				+ "AND Day = Dp.protectionDay ");
+		
+		query.setParameter("student_id", studentId);
+
+		@SuppressWarnings("unchecked")
+		List<ProtectionDay> list = query.list();
+		
+		closeSession(session);
+		if(list.size() == 1){
+			return list.get(0);
+		} else{
+			return null;
+		}
 	}
 
 }

@@ -39,6 +39,7 @@ import com.nulp.dss.model.Student;
 import com.nulp.dss.model.enums.QuarterEnum;
 import com.nulp.dss.util.HibernateUtil;
 import com.nulp.dss.util.Transliterator;
+import com.nulp.dss.util.generators.ReviewsTimeAutoGenerator;
 
 @ManagedBean
 @ViewScoped
@@ -718,9 +719,11 @@ public class ReviewsEditBean implements Serializable{
 	
 	private boolean checkIfStartTimeOverlapping(Review review){
 		for (Review loopReview: reviews){
-			if (loopReview != review && loopReview.getDate().equals(review.getDate()) && loopReview.getTimeStart() != null && loopReview.getTimeEnd() != null){
-				if (review.getTimeStart().compareTo(loopReview.getTimeStart()) >= 0 && review.getTimeStart().compareTo(loopReview.getTimeEnd()) < 0){
-					return false;
+			if (loopReview.getDate() != null && review.getDate() != null) {
+				if (loopReview != review && loopReview.getDate().equals(review.getDate()) && loopReview.getTimeStart() != null && loopReview.getTimeEnd() != null) {
+					if (review.getTimeStart().compareTo(loopReview.getTimeStart()) >= 0 && review.getTimeStart().compareTo(loopReview.getTimeEnd()) < 0) {
+						return false;
+					}
 				}
 			}
 		}
@@ -730,9 +733,11 @@ public class ReviewsEditBean implements Serializable{
 	
 	private boolean checkIfEndTimeOverlapping(Review review){
 		for (Review loopReview: reviews){
-			if (loopReview != review && loopReview.getDate().equals(review.getDate()) && loopReview.getTimeStart() != null && loopReview.getTimeEnd() != null){
-				if (review.getTimeEnd().compareTo(loopReview.getTimeStart()) > 0 && review.getTimeEnd().compareTo(loopReview.getTimeEnd()) <= 0){
-					return false;
+			if (loopReview.getDate() != null && review.getDate() != null) {
+				if (loopReview != review && loopReview.getDate().equals(review.getDate()) && loopReview.getTimeStart() != null && loopReview.getTimeEnd() != null){
+					if (review.getTimeEnd().compareTo(loopReview.getTimeStart()) > 0 && review.getTimeEnd().compareTo(loopReview.getTimeEnd()) <= 0){
+						return false;
+					}
 				}
 			}
 		}
@@ -742,18 +747,20 @@ public class ReviewsEditBean implements Serializable{
 	
 	private boolean checkIfStartAndEndTimeOverlapping(Review review){
 		for (Review loopReview: reviews){
-			if (loopReview != review && loopReview.getDate().equals(review.getDate()) && loopReview.getTimeStart() != null && loopReview.getTimeEnd() != null){
-				if (review.getTimeStart().compareTo(loopReview.getTimeStart()) >= 0 && review.getTimeStart().compareTo(loopReview.getTimeEnd()) < 0){
-					return false;
-				}
-				if (review.getTimeEnd().compareTo(loopReview.getTimeStart()) > 0 && review.getTimeEnd().compareTo(loopReview.getTimeEnd()) <= 0){
-					return false;
-				}
-				if (review.getTimeStart().compareTo(loopReview.getTimeStart()) >= 0 && review.getTimeEnd().compareTo(loopReview.getTimeEnd()) <= 0){
-					return false;
-				}
-				if (loopReview.getTimeStart().compareTo(review.getTimeStart()) >= 0 && loopReview.getTimeEnd().compareTo(review.getTimeEnd()) <= 0){
-					return false;
+			if (loopReview.getDate() != null && review.getDate() != null) {
+				if (loopReview != review && loopReview.getDate().equals(review.getDate()) && loopReview.getTimeStart() != null && loopReview.getTimeEnd() != null){
+					if (review.getTimeStart().compareTo(loopReview.getTimeStart()) >= 0 && review.getTimeStart().compareTo(loopReview.getTimeEnd()) < 0){
+						return false;
+					}
+					if (review.getTimeEnd().compareTo(loopReview.getTimeStart()) > 0 && review.getTimeEnd().compareTo(loopReview.getTimeEnd()) <= 0){
+						return false;
+					}
+					if (review.getTimeStart().compareTo(loopReview.getTimeStart()) >= 0 && review.getTimeEnd().compareTo(loopReview.getTimeEnd()) <= 0){
+						return false;
+					}
+					if (loopReview.getTimeStart().compareTo(review.getTimeStart()) >= 0 && loopReview.getTimeEnd().compareTo(review.getTimeEnd()) <= 0){
+						return false;
+					}
 				}
 			}
 		}
@@ -774,5 +781,15 @@ public class ReviewsEditBean implements Serializable{
          
         return filteredStudents;
     }
+	
+	public void reviewsTimeAutoGenerating(){
+		new ReviewsTimeAutoGenerator().generate(reviewsList);
+		for (Review r: reviewsList){
+			reviewDao.update(r);
+		}
+		
+		FacesMessage msg = new FacesMessage("Час згенеровано!");
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
 	
 }

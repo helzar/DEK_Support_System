@@ -1,5 +1,6 @@
 package com.nulp.dss.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -56,12 +57,19 @@ public class DiplomaDao extends BaseDaoImpl<Diploma> {
 		closeSession(session);
 	}
 	
-	public List<Diploma> getAllFreeByGraduationId(Integer graduationId, ProtectionDay protectionDay){
+	public List<Diploma> getAllFreeByGraduationId(Graduation graduation, Collection<ProtectionDay> protectionDays){
 		Session session = this.getSession();
 
-		session.update(protectionDay);
+		session.update(graduation);
+		for (ProtectionDay pd: protectionDays){
+			if (pd != null){
+				session.update(pd);
+				pd.getDiplomas().size();
+			}
+		}
+		
 		Query query = session.createQuery("SELECT d FROM Diploma as d WHERE d.protectionDay = null AND d.student.group.graduation.id = :id");
-		query.setParameter("id", graduationId);
+		query.setParameter("id", graduation.getId());
 		@SuppressWarnings("unchecked")
 		List<Diploma> list = query.list();
 

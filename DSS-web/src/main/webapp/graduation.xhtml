@@ -13,8 +13,21 @@
 			<ui:define name="content">
 			<div style="background-color: #F1F1F1;">
 			
+			<script>
+				function start() {
+				    PF('statusDialog').show();
+				}
+				 
+				function stop() {
+				    PF('statusDialog').hide();
+				}
+			</script>
+			
 			<h:form id="form1">
 			    <p:growl id="msgs" showDetail="false" />
+			    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+				    <p:graphicImage name="/static/images/ajax_loading_bar.gif" />
+				</p:dialog>
 	
 					<p:panel header="Виберіть захист" style="margin-bottom:5px;margin-left:30%;margin-top:5px;width:40%">
 				        <h:panelGrid columns="2" cellpadding="5">
@@ -43,6 +56,21 @@
 					        <p:outputLabel value="#{graduationEditBean.graduationStatistic}" />
 					        <p:outputLabel value="#{graduationEditBean.scheduleStatistic}" />
 					    </h:panelGrid>
+					    
+					    <p:commandButton value="Автоматичне розподілення студентів по днях захисту"
+							actionListener="#{graduationEditBean.authoGenerateStudentsScedule()}"
+							icon="ui-icon-check"
+							update=":form1,:form2" />
+							
+						<br/>
+						<p:commandButton icon="ui-icon-arrowthick-1-s"
+							style="margin-top:5px"
+							value="Завантажити розклад для студентів"
+							title="Завантажити розклад для студентів" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							actionListener="#{graduationEditBean.downloadStudentsScheduleFile}">
+							<p:fileDownload value="#{graduationEditBean.studentsScheduleFile}" />
+						</p:commandButton>
 				        
 				    </p:panel>
 

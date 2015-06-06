@@ -25,6 +25,9 @@ public class GroupNameManager {
 		else if (groupName.startsWith("²ÓÑñ") || groupName.startsWith("IYCc")){
 			return DiplomaTypeEnum.SPECIALIST;
 		}
+		else if (groupName.startsWith("²ÓÑ") || groupName.startsWith("IYC")){
+			return DiplomaTypeEnum.NCK;
+		}
 		return DiplomaTypeEnum.OTHER;
 	}
 	
