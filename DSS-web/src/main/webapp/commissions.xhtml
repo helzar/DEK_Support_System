@@ -209,8 +209,8 @@
 							<p:separator/>
 							<p:commandButton value="Додати новий день засідання" actionListener="#{commissionEditBean.addNewProtectionDay()}" icon="ui-icon-check" update=":form1:msgs,:form3"/>
 							<p:commandButton icon="ui-icon-arrowthick-1-s" style="margin-left:15px;"
-				            			value="Завантажити бланки оплати для рецензента"
-				                        title="Завантажити бланки оплати для рецензента"
+				            			value="Завантажити графік засідань"
+				                        title="Завантажити графік засідань"
 				                        ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
 				                        actionListener="#{commissionEditBean.downloadScheduleForm}">
 								<p:fileDownload value="#{commissionEditBean.scheduleFormFile}" />

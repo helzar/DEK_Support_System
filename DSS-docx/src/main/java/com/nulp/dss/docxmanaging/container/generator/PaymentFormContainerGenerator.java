@@ -81,7 +81,9 @@ public class PaymentFormContainerGenerator {
 				startDate = minDate(startDate, diplomas.get(i).getReview().getDate());
 				endDate = maxDate(endDate, diplomas.get(i).getReview().getDate());
 				groupName = groupDao.getByStudentId(diplomas.get(i).getStudent().getId()).getName();
-				diplomaTypes.add(GroupNameManager.getGroupDiplomasType(groupName));
+				if (!GroupNameManager.getGroupDiplomasType(groupName).equals(DiplomaTypeEnum.NCK)){
+					diplomaTypes.add(GroupNameManager.getGroupDiplomasType(groupName));
+				}
 				groups.add(groupName);
 			} else{
 				break;

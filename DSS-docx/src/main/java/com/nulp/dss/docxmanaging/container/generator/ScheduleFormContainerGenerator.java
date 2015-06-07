@@ -300,7 +300,8 @@ public class ScheduleFormContainerGenerator {
 	
 	private String getOthersString(List<Group> groups){
 		for (Group g: groups){
-			if (GroupNameManager.getGroupDiplomasType(g.getName()).equals(DiplomaTypeEnum.OTHER)){
+			DiplomaTypeEnum dp = GroupNameManager.getGroupDiplomasType(g.getName());
+			if (dp.equals(DiplomaTypeEnum.OTHER) || dp.equals(DiplomaTypeEnum.NCK)){
 				return "студенти з НКЦ";
 			}
 		}
